@@ -14,7 +14,7 @@ const SEGMENTS = [
     chunks: ['UM *DREI UHR SIEBEN*', 'STEHT AUF KAMERA VIER', '*JEMAND*', 'MITTEN AUF DER *FAHRBAHN*', 'ER SCHAUT *DIREKT*', 'IN DIE *KAMERA*'] },
   { scene: 'radio', hud: { time: '03:08', loc: 'KONTROLLRAUM', val: '400 M' }, radio: 'NORDPORTAL · MEHMET',
     text: 'Ich funke Mehmet an, am Nordportal. Er sagt: Das Tor ist zu. Hier ist keiner reingekommen.',
-    chunks: ['ICH FUNKE *MEHMET* AN', 'AM *NORDPORTAL*', 'ER SAGT', 'DAS TOR *IST ZU*', 'HIER IST *KEINER*', 'REINGEKOMMEN'] },
+    chunks: ['ICH FUNKE *MEHMET* AN', 'AM *NORDPORTAL*', 'ER SAGT', 'M|DAS TOR *IST ZU*', 'M|HIER IST *KEINER*', 'M|REINGEKOMMEN'] },
   { scene: 'cam', camScale: 1.7, jumpFrom: '400 M', hud: { time: '03:09', loc: 'KAMERA 4', val: '280 M' },
     text: 'Ich schaue wieder hin. Er ist näher.',
     chunks: ['ICH SCHAUE', '*WIEDER* HIN', 'ER IST *NÄHER*'] },
@@ -29,7 +29,7 @@ const SEGMENTS = [
     chunks: ['UND JETZT', '*VERSTEHE* ICH ES', 'ER BEWEGT SICH NUR', 'WENN ICH *NICHT*', '*HINSEHE*'] },
   { scene: 'radio', red: true, hud: { time: '03:14', loc: 'KONTROLLRAUM', val: '??? M', red: true }, radio: 'NORDPORTAL · MEHMET',
     text: 'Dann knackt das Funkgerät. Mehmet flüstert: Jonas … auf meiner Kamera ist er auch. Und er ist schon bei dir.',
-    chunks: ['DANN *KNACKT*', 'DAS FUNKGERÄT', 'MEHMET *FLÜSTERT*', '*JONAS*', 'AUF MEINER KAMERA', 'IST ER *AUCH*', 'UND ER IST SCHON', '*BEI DIR*'] },
+    chunks: ['DANN *KNACKT*', 'DAS FUNKGERÄT', 'MEHMET *FLÜSTERT*', 'M|*JONAS*', 'M|AUF MEINER KAMERA', 'M|IST ER *AUCH*', 'M|UND ER IST SCHON', 'M|*BEI DIR*'] },
   { scene: 'behind', hud: { time: '03:14', loc: 'KAMERA 1 · CONTAINER', val: '0 M', red: true },
     text: 'Ich drehe mich nicht um.',
     chunks: ['ICH DREHE MICH', '*NICHT* UM'], tail: 1.2 },
@@ -45,9 +45,11 @@ function buildSchedule(segs, words) {
   segs.forEach((s, i) => {
     const seg = { ...s, start: t, chunksT: [] };
     s.chunks.forEach(c => {
+      const speaker = c.startsWith('M|') ? 'mehmet' : 'jonas';
+      c = c.replace(/^M\|/, '');
       const plain = c.replace(/\*/g, '');
       const d = Math.max(0.55, plain.length / 13);
-      seg.chunksT.push({ text: c, start: t, end: t + d });
+      seg.chunksT.push({ text: c, start: t, end: t + d, speaker });
       t += d;
     });
     t += (s.tail || 0.45);

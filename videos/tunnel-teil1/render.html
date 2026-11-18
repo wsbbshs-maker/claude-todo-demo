@@ -18,6 +18,7 @@
   .bars{display:flex;gap:6px;align-items:center}.bars i{display:block;width:8px;background:currentColor;border-radius:2px}
   .sub{position:absolute;left:40px;right:40px;top:1440px;text-align:center;font-size:100px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.05;text-shadow:0 6px 0 #000a,0 0 30px #000c;-webkit-text-stroke:14px #05060c;paint-order:stroke fill;z-index:6}
   .sub b{color:#ffd21f}
+  .sub.m{font-style:italic}.sub.m b{color:#7fd4ff}
   .flash{position:absolute;inset:0;z-index:7;pointer-events:none}
   .vign{position:absolute;inset:0;z-index:3;background:radial-gradient(ellipse at 50% 50%,transparent 55%,#000a 100%)}
 </style></head><body>
@@ -54,27 +55,6 @@ function tunnelBase(t,flick=0,showFig=true){
   if(showFig) o+=figure(VX+6,VY+30,1);
   return o;
 }
-function jonas(x,y,k,opts={}){
-  const beam = opts.beam!==false ? `<path d="M 156 -425 L 760 -560 L 760 -300 Z" fill="#fff6c8" opacity=".12"/>` : '';
-  const ex = opts.look||0;
-  return `<g transform="translate(${x} ${y}) scale(${k})">
-   <rect x="-26" y="-250" width="20" height="250" rx="6" fill="#111" transform="rotate(${opts.step||0} -16 -250)"/><rect x="6" y="-250" width="20" height="250" rx="6" fill="#111" transform="rotate(${-(opts.step||0)} 16 -250)"/>
-   <path d="M -60 -260 Q -66 -470 0 -480 Q 66 -470 60 -260 Z" fill="#ff7a1f"/>
-   <rect x="-60" y="-350" width="120" height="16" fill="#f4f1e4"/><rect x="-60" y="-300" width="120" height="16" fill="#f4f1e4"/>
-   <path d="M -60 -440 Q -100 -380 -86 -300" stroke="#ff7a1f" stroke-width="26" fill="none" stroke-linecap="round"/>
-   <path d="M 60 -440 Q 104 -400 130 -420" stroke="#ff7a1f" stroke-width="26" fill="none" stroke-linecap="round"/>
-   <rect x="120" y="-436" width="34" height="22" rx="5" fill="#333"/><circle cx="154" cy="-425" r="8" fill="#fff6c8"/>${beam}
-   ${head(0,-560,1,ex,opts.wide)}
-  </g>`;
-}
-function head(x,y,k,ex=0,wide=false){
-  const r=wide?30:26, p=wide?8:11;
-  return `<g transform="translate(${x} ${y}) scale(${k})"><circle cx="0" cy="0" r="88" fill="#0a0a0a"/>
-   <path d="M -88 -25 Q -80 -100 0 -105 Q 80 -100 88 -25 Z" fill="#ffd21f"/><rect x="-96" y="-32" width="192" height="16" rx="8" fill="#e6b800"/>
-   <circle cx="-26" cy="15" r="${r}" fill="#fff"/><circle cx="30" cy="15" r="${r}" fill="#fff"/>
-   <circle cx="${-20+ex}" cy="12" r="${p}" fill="#000"/><circle cx="${36+ex}" cy="12" r="${p}" fill="#000"/>
-   <ellipse cx="4" cy="60" rx="${wide?9:12}" ry="${wide?11:7}" fill="#fff"/></g>`;
-}
 function monitorScreen(x,y,w,h,t,figScale,marker,label='CAM 04 · RÖHRE OST',inner=null){
   let o=`<rect x="${x-40}" y="${y-40}" width="${w+80}" height="${h+80}" rx="26" fill="#1d1f2e" stroke="#2f3247" stroke-width="6"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="url(#mon)"/>`;
   const id='c'+Math.round(x)+Math.round(y);
@@ -104,6 +84,104 @@ function camScene(seg,lt,t){
   o+=`<ellipse cx="540" cy="1000" rx="700" ry="600" fill="#3ad6a0" opacity=".05"/>`;
   return o;
 }
+// ===== Figuren, Mimik & Gestik =====
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const ease=x=>{x=clamp(x);return x*x*(3-2*x)};
+const lerp=(a,b,k)=>a+(b-a)*k;
+const GLOVE='#e8e2cf', VEST='#ff7a1f', STRIPE='#f4f1e4';
+
+// Wer spricht gerade, wie weit ist der Mund offen?
+// Sobald die echte Stimme vorliegt, setzt window.MOUTH (Lautstärke pro Frame, 0..1) die Mundöffnung.
+function speech(seg,t){
+  const cs=seg.chunksT; const c=cs.find(c=>t>=c.start&&t<c.end-0.05);
+  let open=0, who=null;
+  if(c){ who=c.speaker;
+    if(window.MOUTH){ open=clamp((window.MOUTH[Math.floor(t*30)]||0)*1.6); }
+    else { const syl=Math.abs(Math.sin(t*Math.PI*2*4.3)); open=syl*(0.5+0.5*rnd(Math.floor(t*8.6)+3)); }
+  }
+  return {who,open,c};
+}
+// Posen pro Untertitel-Chunk, weich überblendet
+function pose(seg,t,table,def){
+  const cs=seg.chunksT; let cur={...def}, prev={...def}, since=99;
+  for(let i=0;i<cs.length;i++){ if(t>=cs[i].start-0.1 && table[i]){ prev=cur; cur={...cur,...table[i]}; since=t-(cs[i].start-0.1); } }
+  const k=ease(since/0.28), out={};
+  for(const key in cur){ const a=prev[key], b=cur[key];
+    if(typeof b==='number'&&typeof a==='number') out[key]=lerp(a,b,k);
+    else if(Array.isArray(b)&&Array.isArray(a)) out[key]=b.map((v,i)=>lerp(a[i],v,k));
+    else out[key]=b; }
+  return out;
+}
+function blinkAt(t,seed=0){const ph=(t+seed)%3.3;return ph<0.15?Math.sin(ph/0.15*Math.PI):0;}
+
+// Gesicht (Ursprung = Kopfmitte, Radius 88)
+function face(o){
+  const p={lx:0,ly:0,open:0,blink:0,lid:0,scared:0,sweat:0,t:0,talking:false,...o};
+  const r=26+5*p.scared, pr=11-4*p.scared;
+  let s=`<circle r="88" fill="#0a0a0a"/>
+   <path d="M -88 -25 Q -80 -100 0 -105 Q 80 -100 88 -25 Z" fill="#ffd21f"/><rect x="-96" y="-32" width="192" height="16" rx="8" fill="#e6b800"/>`;
+  [[-28,-1],[30,1]].forEach(([cx,sg])=>{const cy=15;
+    s+=`<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${Math.max(2,r*(1-p.blink*0.95))}" fill="#fff"/>`;
+    if(p.blink<0.6) s+=`<circle cx="${cx+6*sg*0+p.lx}" cy="${cy-3+p.ly}" r="${pr}" fill="#000"/>`;
+    if(Math.abs(p.lid)>0.02&&p.blink<0.6){ // Augenlid: >0 besorgt (innen hoch), <0 misstrauisch (innen tief)
+      const inner=cx+(-sg)*(r+4), outer=cx+sg*(r+4);
+      const yIn=cy-r+(p.lid<0?-p.lid*r*1.0:0), yOut=cy-r+(p.lid>0?p.lid*r*1.0:0);
+      s+=`<path d="M ${inner} ${cy-r-8} L ${outer} ${cy-r-8} L ${outer} ${yOut} L ${inner} ${yIn} Z" fill="#0a0a0a"/>`;}
+  });
+  if(p.open>0.05){const ry=4+20*p.open, rx=14+5*p.open;
+    s+=`<ellipse cx="4" cy="62" rx="${rx}" ry="${ry}" fill="#fff"/>`;
+    if(p.open>0.25) s+=`<ellipse cx="4" cy="${62+ry*0.15}" rx="${rx*0.68}" ry="${ry*0.62}" fill="#6b1424"/>`;
+  } else if(p.scared>0.5) s+=`<ellipse cx="4" cy="62" rx="9" ry="12" fill="#fff"/><ellipse cx="4" cy="63" rx="5" ry="7" fill="#6b1424"/>`;
+  else s+=`<rect x="-11" y="58" width="30" height="6" rx="3" fill="#fff"/>`;
+  if(p.sweat>0.05){const y=-20+((p.t*45)%70);
+    s+=`<path d="M 78 ${y} q -10 16 0 22 q 10 -6 0 -22 Z" fill="#9fd8ff" opacity="${p.sweat}"/>`;}
+  return s;
+}
+function arm(sx,sy,a1,a2,len=115,col=VEST,w=26){
+  const d=Math.PI/180, ex=sx+Math.cos(a1*d)*len, ey=sy+Math.sin(a1*d)*len, hx=ex+Math.cos(a2*d)*len, hy=ey+Math.sin(a2*d)*len;
+  return {svg:`<path d="M ${sx} ${sy} L ${ex} ${ey} L ${hx} ${hy}" stroke="${col}" stroke-width="${w}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,hx,hy};
+}
+// Ganzkörper (Ursprung = zwischen den Füßen)
+function jonasBody(o,t){
+  const p={armL:[105,95],armR:[60,-10],flash:true,finger:false,step:0,tremble:0,shake:0,tilt:0,face:{},...o};
+  const tr=p.tremble?(rnd(t*40)-.5)*7*p.tremble:0;
+  let s=`<g transform="translate(${tr} 0)">
+   <rect x="-26" y="-250" width="20" height="250" rx="6" fill="#111" transform="rotate(${p.step} -16 -250)"/><rect x="6" y="-250" width="20" height="250" rx="6" fill="#111" transform="rotate(${-p.step} 16 -250)"/>
+   <path d="M -60 -260 Q -66 -470 0 -480 Q 66 -470 60 -260 Z" fill="${VEST}"/>
+   <rect x="-60" y="-350" width="120" height="16" fill="${STRIPE}"/><rect x="-60" y="-300" width="120" height="16" fill="${STRIPE}"/>`;
+  const L=arm(-55,-440,p.armL[0],p.armL[1]), R=arm(55,-440,p.armR[0],p.armR[1]);
+  if(p.flash){const a=p.armR[1]*Math.PI/180, bx=R.hx+Math.cos(a)*40, by=R.hy+Math.sin(a)*40;
+    s+=`<path d="M ${bx} ${by} L ${bx+Math.cos(a+.22)*800} ${by+Math.sin(a+.22)*800} L ${bx+Math.cos(a-.22)*800} ${by+Math.sin(a-.22)*800} Z" fill="#fff6c8" opacity=".13"/>`;}
+  s+=L.svg+`<circle cx="${L.hx}" cy="${L.hy}" r="16" fill="${GLOVE}"/>`;
+  if(p.finger) s+=`<rect x="${L.hx-6}" y="${L.hy-50}" width="12" height="42" rx="6" fill="${GLOVE}"/>`;
+  s+=R.svg;
+  if(p.flash) s+=`<g transform="translate(${R.hx} ${R.hy}) rotate(${p.armR[1]})"><rect x="0" y="-11" width="42" height="22" rx="5" fill="#333"/><circle cx="42" cy="0" r="9" fill="#fff6c8"/></g>`;
+  s+=`<circle cx="${R.hx}" cy="${R.hy}" r="16" fill="${GLOVE}"/>`;
+  const hx=Math.sin(t*13)*12*p.shake;
+  s+=`<g transform="translate(${hx} -560) rotate(${p.tilt})">${face({...p.face,t})}</g></g>`;
+  return s;
+}
+// Oberkörper mit Funkgerät (radioK: 0 = am Mund, 1 = am Ohr)
+function jonasUpper(o,t){
+  const p={radioK:0,tremble:0,ledOn:false,red:false,face:{},...o};
+  const tr=p.tremble?(rnd(t*40)-.5)*6*p.tremble:0;
+  const hx=lerp(92,128,p.radioK), hy=lerp(-455,-610,p.radioK), rot=lerp(-12,8,p.radioK);
+  return `<g transform="translate(${tr} 0)"><path d="M -150 0 Q -160 -420 0 -440 Q 160 -420 150 0 Z" fill="${VEST}"/>
+    <rect x="-150" y="-300" width="300" height="26" fill="${STRIPE}"/><rect x="-150" y="-220" width="300" height="26" fill="${STRIPE}"/>
+    <g transform="translate(0 -560) scale(1.1)">${face({...p.face,t})}</g>
+    <path d="M 120 -380 Q 250 -340 ${hx+20} ${hy+60}" stroke="${VEST}" stroke-width="56" fill="none" stroke-linecap="round"/>
+    <g transform="translate(${hx} ${hy}) rotate(${rot})"><rect x="-32" y="-80" width="64" height="140" rx="14" fill="#222"/><rect x="8" y="-150" width="10" height="75" fill="#222"/>
+      <rect x="-22" y="-62" width="44" height="28" rx="4" fill="${p.red?'#ff3b4a':'#4be38c'}" opacity="${p.ledOn?.95:.35}"/>
+      ${[0,1,2].map(i=>`<rect x="-20" y="${-20+i*14}" width="40" height="5" rx="2" fill="#444"/>`).join('')}</g>
+    <circle cx="${hx+18}" cy="${hy+50}" r="30" fill="${GLOVE}"/></g>`;
+}
+// Jonas von hinten (vor dem Monitor)
+function backHead(lean,t){
+  return `<g transform="translate(0 ${-lean*24}) scale(${1+lean*0.06})"><path d="M -230 260 Q -220 -60 0 -80 Q 220 -60 230 260 Z" fill="${VEST}"/>
+   <rect x="-226" y="40" width="452" height="26" fill="${STRIPE}"/><circle cx="0" cy="-170" r="110" fill="#0a0a0a"/>
+   <path d="M -112 -170 Q -105 -300 0 -305 Q 105 -300 112 -170 Z" fill="#ffd21f"/><rect x="-118" y="-182" width="236" height="18" rx="9" fill="#e6b800"/></g>`;
+}
+
 const SCENES={
   monitorWall(seg,lt,t){
     let o=`<rect width="${W}" height="${H}" fill="#0f1122"/><rect x="0" y="1450" width="${W}" height="470" fill="#2a2140"/>`;
@@ -111,50 +189,80 @@ const SCENES={
     cams.forEach(([x,y,l],i)=>{
       if(i<3){o+=`<rect x="${x}" y="${y}" width="460" height="380" rx="14" fill="#1d1f2e"/><rect x="${x+20}" y="${y+20}" width="420" height="340" rx="6" fill="#16241f"/>
         <path d="M ${x+130} ${y+360} L ${x+210} ${y+170} L ${x+250} ${y+170} L ${x+330} ${y+360} Z" fill="#203230"/><text x="${x+36}" y="${y+56}" font-family="DejaVu Sans Mono" font-size="22" fill="#cfe">${l}</text>`;}
-      else{const fl = rnd(Math.floor(t*14))>.7?.25:1;
+      else{const fl=rnd(Math.floor(t*14))>.7?.25:1;
         o+=`<g opacity="${fl}">`+monitorScreen(x+20,y+20,420,340,t,0.8,false,'CAM 04')+`</g>`;
         o+=`<rect x="${x+8}" y="${y+8}" width="444" height="364" rx="12" fill="none" stroke="#ff3b4a" stroke-width="6" opacity="${.5+.5*Math.sin(t*6)}"/>`;}
     });
     o+=`<ellipse cx="770" cy="1140" rx="420" ry="360" fill="url(#redg)" opacity=".5"/>`;
+    // Jonas spricht zum Zuschauer, Warnfinger bei "Regel" / "Schau nicht", Blick zu Kamera 4
+    const sp=speech(seg,t);
+    const ps=pose(seg,t,{0:{lx:0,lid:0},2:{lx:-3,lid:0.25},3:{finger:1,armL:[160,268],lid:-0.25},4:{lx:10,ly:-2,lid:0.45},5:{lx:12,ly:-4,lid:0.5}},
+      {finger:0,armL:[105,95],lx:0,ly:2,lid:0});
+    o+=`<g transform="translate(260 1985) scale(1.35)">${jonasBody({flash:false,armR:[80,100],armL:ps.armL,finger:ps.finger>0.5,face:{lx:ps.lx,ly:ps.ly,lid:ps.lid,open:sp.who==='jonas'?sp.open:0,blink:blinkAt(t)}},t)}</g>`;
     return o;
   },
-  tunnel(seg,lt,t){return tunnelBase(t)+jonas(250,1880,1.25);},
-  cam:camScene,
+  tunnel(seg,lt,t){
+    const sp=speech(seg,t);
+    const ps=pose(seg,t,{0:{armL:[215,270],wave:1},1:{armL:[105,95],wave:0,lid:0},4:{lid:0.2},5:{lid:-0.35,shake:1},6:{shake:0.6}},
+      {armL:[105,95],wave:0,lid:0,shake:0});
+    const armL=[ps.armL[0],ps.armL[1]+Math.sin(t*12)*22*ps.wave];
+    const sweep=Math.sin(t*1.3)*8;
+    return tunnelBase(t)+`<g transform="translate(250 1880) scale(1.25)">${jonasBody({armL,armR:[60,-10+sweep],shake:ps.shake,face:{lx:2,ly:0,lid:ps.lid,open:sp.who==='jonas'?sp.open:0,blink:blinkAt(t,1)}},t)}</g>`;
+  },
+  cam(seg,lt,t){
+    let o=`<rect width="${W}" height="${H}" fill="#111326"/><rect x="0" y="1380" width="${W}" height="540" fill="#2a2140"/><rect x="0" y="1380" width="${W}" height="18" fill="#3b3058"/>`;
+    o+=`<rect x="500" y="1280" width="80" height="100" fill="#1d1f2e"/>`;
+    o+=monitorScreen(130,560,820,680,t,seg.camScale,seg.marker);
+    if(seg.marker) o+=`<g transform="translate(540 ${560+680*.64+(seg.camScale-1)*680*.13+70})"><rect x="-150" y="0" width="300" height="56" rx="28" fill="#ff3b4a"/><text x="0" y="38" text-anchor="middle" font-family="Inter" font-weight="800" font-size="28" fill="#fff">HIER STAND ICH</text></g>`;
+    o+=`<ellipse cx="540" cy="1000" rx="700" ry="600" fill="#3ad6a0" opacity=".05"/>`;
+    // Jonas von hinten: beugt sich langsam vor, zuckt beim Sprung zurück
+    let lean=ease(lt/3)*0.8;
+    if(seg.jumpFrom){const j=lt-0.5; if(j>0) lean=j<0.15? lerp(0.3,-1.2,j/0.15) : lerp(-1.2,0.2,ease((j-0.15)/1.2));}
+    o+=`<g transform="translate(870 1760)">${backHead(lean,t)}</g>`;
+    return o;
+  },
   tunnelWalk(seg,lt,t){
-    const step=Math.sin(lt*7)*8;
-    return tunnelBase(t,1,false)+jonas(560,1900+Math.abs(Math.sin(lt*7))*-8,1.15,{step,look:Math.sin(lt*1.5)*8});
+    const sp=speech(seg,t); const step=Math.sin(lt*7)*8;
+    const look=Math.sin(lt*1.6)*12;
+    return tunnelBase(t,1,false)+`<g transform="translate(560 ${1900-Math.abs(Math.sin(lt*7))*8}) scale(1.15)">${jonasBody({step,armR:[55,-25+Math.sin(lt*1.6)*18],tilt:look*0.3,face:{lx:look,ly:-2,lid:0.4,open:sp.who==='jonas'?sp.open:0,blink:blinkAt(t,2)}},t)}</g>`;
   },
   radio(seg,lt,t){
-    const red=seg.red;
+    const red=seg.red, sp=speech(seg,t);
+    const ps = red
+      ? pose(seg,t,{0:{radioK:0.5,lx:-4,lid:0.4,scared:0.4,sweat:0.5},3:{radioK:1,lx:6,scared:1,sweat:1,lid:0},6:{lx:-14,ly:2},7:{lx:-16,ly:3}},{radioK:0.5,lx:0,ly:0,lid:0,scared:0,sweat:0})
+      : pose(seg,t,{0:{radioK:0,lx:0,lid:0},3:{radioK:1,lx:8,lid:0.15},4:{lid:0.4},5:{lid:0.5,lx:4}},{radioK:0,lx:0,ly:0,lid:0,scared:0,sweat:0});
     let o=`<rect width="${W}" height="${H}" fill="${red?'#1a0d18':'#111326'}"/><rect x="0" y="1380" width="${W}" height="540" fill="#2a2140"/>`;
     o+=`<ellipse cx="540" cy="1000" rx="600" ry="700" fill="${red?'url(#redg)':'#3a3f70'}" opacity="${red?.6+.3*Math.sin(t*8):.25}"/>`;
-    // Jonas Oberkörper mit Funkgerät
-    o+=`<g transform="translate(540 2050) scale(1.6)"><path d="M -150 0 Q -160 -420 0 -440 Q 160 -420 150 0 Z" fill="#ff7a1f"/>
-      <rect x="-150" y="-300" width="300" height="26" fill="#f4f1e4"/><rect x="-150" y="-220" width="300" height="26" fill="#f4f1e4"/>
-      <path d="M 120 -380 Q 230 -420 200 -560" stroke="#ff7a1f" stroke-width="56" fill="none" stroke-linecap="round"/>
-      <rect x="150" y="-700" width="70" height="150" rx="14" fill="#222"/><rect x="190" y="-770" width="10" height="80" fill="#222"/><rect x="160" y="-680" width="50" height="30" rx="4" fill="${red?'#ff3b4a':'#4be38c'}" opacity="${.6+.4*Math.sin(t*10)}"/>
-      ${head(0,-560,1.1,red?-10:8,red)}</g>`;
-    // Funk-Overlay
-    const bars=Array.from({length:22},(_,i)=>{const h=8+Math.abs(Math.sin(t*14+i*1.3))*38*(red?.6:1);return `<rect x="${330+i*16}" y="${720-h/2}" width="8" height="${h}" rx="3" fill="${red?'#ff8a94':'#e8e8f0'}"/>`}).join('');
-    o+=`<g><rect x="140" y="560" width="800" height="230" rx="22" fill="#0b0c18" stroke="${red?'#ff3b4a':'#3b3f66'}" stroke-width="4" opacity=".95"/>
-      <text x="300" y="625" font-family="Inter" font-weight="800" font-size="24" letter-spacing="4" fill="#9a9db8">FUNK · KANAL 2</text>
-      <text x="300" y="678" font-family="Inter" font-weight="800" font-size="44" fill="#fff">${seg.radio}</text>${bars}
-      <g transform="translate(215 675)" stroke="${red?'#ff3b4a':'#ffd21f'}" stroke-width="7" fill="none" stroke-linecap="round"><circle r="9" fill="${red?'#ff3b4a':'#ffd21f'}" stroke="none"/><path d="M -28 -28 A 40 40 0 0 0 -28 28"/><path d="M 28 -28 A 40 40 0 0 1 28 28"/><path d="M -48 -46 A 66 66 0 0 0 -48 46"/><path d="M 48 -46 A 66 66 0 0 1 48 46"/></g></g>`;
+    const mehmet=sp.who==='mehmet';
+    o+=`<g transform="translate(540 2050) scale(1.6)">${jonasUpper({radioK:ps.radioK,tremble:red?ps.scared:0,ledOn:mehmet||(sp.who==='jonas'&&ps.radioK<0.3),red,
+        face:{lx:ps.lx,ly:ps.ly,lid:ps.lid,scared:ps.scared,sweat:ps.sweat,open:sp.who==='jonas'?sp.open:0,blink:red?0:blinkAt(t,.5)}},t)}</g>`;
+    const amp = sp.who? (0.25+0.75*sp.open):0.08;
+    const col=red?'#ff8a94':'#e8e8f0';
+    const barsS=Array.from({length:22},(_,i)=>{const h=6+Math.abs(Math.sin(t*14+i*1.3))*40*amp;return `<rect x="${330+i*16}" y="${720-h/2}" width="8" height="${h}" rx="3" fill="${col}"/>`}).join('');
+    const mode = mehmet?'EMPFANG':(sp.who==='jonas'&&ps.radioK<0.3?'SENDEN':'KANAL 2');
+    o+=`<g><rect x="140" y="560" width="800" height="230" rx="22" fill="#0b0c18" stroke="${red?'#ff3b4a':(mehmet?'#4be38c':'#3b3f66')}" stroke-width="4" opacity=".95"/>
+      <text x="300" y="625" font-family="Inter" font-weight="800" font-size="24" letter-spacing="4" fill="#9a9db8">FUNK · ${mode}</text>
+      <text x="300" y="678" font-family="Inter" font-weight="800" font-size="44" fill="#fff">${seg.radio}</text>${barsS}
+      <g transform="translate(215 675)" stroke="${red?'#ff3b4a':'#ffd21f'}" stroke-width="7" fill="none" stroke-linecap="round" opacity="${mehmet?1:.5}"><circle r="9" fill="${red?'#ff3b4a':'#ffd21f'}" stroke="none"/><path d="M -28 -28 A 40 40 0 0 0 -28 28"/><path d="M 28 -28 A 40 40 0 0 1 28 28"/><path d="M -48 -46 A 66 66 0 0 0 -48 46"/><path d="M 48 -46 A 66 66 0 0 1 48 46"/></g></g>`;
     return o;
   },
   face(seg,lt,t){
+    const sp=speech(seg,t);
+    const ps=pose(seg,t,{0:{lid:0.3,scared:0},1:{scared:1,lid:0,sweat:0.6},2:{lx:-12},3:{lx:12,sweat:1},4:{lx:0,ly:3,lid:0.2}},{lid:0,scared:0,sweat:0,lx:0,ly:0});
     let o=`<rect width="${W}" height="${H}" fill="#14102a"/><ellipse cx="540" cy="1000" rx="700" ry="700" fill="#3ad6a0" opacity="${.08+.04*Math.sin(t*20)}"/>`;
-    o+=`<g transform="translate(540 1960) scale(1.9)"><path d="M -150 0 Q -160 -300 0 -320 Q 160 -300 150 0 Z" fill="#ff7a1f"/><rect x="-150" y="-200" width="300" height="26" fill="#f4f1e4"/></g>`;
-    o+=head(540,1000+Math.sin(lt*30)*2,4.2,0,true);
-    // Monitor-Reflexion in den Augen
-    o+=`<rect x="410" y="1040" width="22" height="16" fill="#3ad6a0" opacity=".7"/><rect x="645" y="1040" width="22" height="16" fill="#3ad6a0" opacity=".7"/>`;
+    o+=`<g transform="translate(540 1960) scale(1.9)"><path d="M -150 0 Q -160 -300 0 -320 Q 160 -300 150 0 Z" fill="${VEST}"/><rect x="-150" y="-200" width="300" height="26" fill="${STRIPE}"/></g>`;
+    const tr=(rnd(t*40)-.5)*6*ps.scared;
+    o+=`<g transform="translate(${540+tr} 1000) scale(4.2)">${face({lx:ps.lx,ly:ps.ly,lid:ps.lid,scared:ps.scared,sweat:ps.sweat,open:sp.who==='jonas'?sp.open:0,blink:ps.scared>0.5?0:blinkAt(t,1.7),t})}</g>`;
+    o+=`<rect x="${400+ps.lx*4}" y="1040" width="22" height="16" fill="#3ad6a0" opacity=".7"/><rect x="${640+ps.lx*4}" y="1040" width="22" height="16" fill="#3ad6a0" opacity=".7"/>`;
     return o;
   },
   behind(seg,lt,t){
+    const reach=10+ease(lt/2.6)*75, jt=(rnd(t*40)-.5)*4;
     const inner=`<rect x="130" y="560" width="820" height="680" fill="#1d2a28"/><rect x="130" y="1060" width="820" height="180" fill="#26332f"/>
       <rect x="420" y="760" width="300" height="220" rx="10" fill="#0e1513"/><rect x="440" y="780" width="260" height="180" fill="#2f4a42"/>
-      <g transform="translate(560 1240) scale(.62)"><path d="M -150 0 Q -160 -420 0 -440 Q 160 -420 150 0 Z" fill="#7a8a70"/><rect x="-150" y="-300" width="300" height="26" fill="#b8c4b0"/><circle cx="0" cy="-560" r="130" fill="#0a0d0c"/><path d="M -130 -590 Q -120 -700 0 -705 Q 120 -700 130 -590 Z" fill="#a6b36a"/></g>
-      <g transform="translate(760 1240)">${figure(0,0,4.8,'#e8fff4').replace('<g transform="translate(0 0) scale(4.8)">','<g transform="scale(4.8)">')}</g>`;
+      <g transform="translate(${560+jt} 1240) scale(.62)"><path d="M -150 0 Q -160 -420 0 -440 Q 160 -420 150 0 Z" fill="#7a8a70"/><rect x="-150" y="-300" width="300" height="26" fill="#b8c4b0"/><circle cx="0" cy="-560" r="130" fill="#0a0d0c"/><path d="M -130 -590 Q -120 -700 0 -705 Q 120 -700 130 -590 Z" fill="#a6b36a"/></g>
+      ${figure(760,1240,4.8,'#e8fff4')}
+      <path d="M ${760-8*4.8} ${1240-50*4.8} L ${760-8*4.8-reach} ${1240-46*4.8}" stroke="#020308" stroke-width="22" stroke-linecap="round"/>`;
     let o=`<rect width="${W}" height="${H}" fill="#120a14"/><rect x="0" y="1380" width="${W}" height="540" fill="#2a1428"/>`;
     o+=monitorScreen(130,560,820,680,t,0,false,'CAM 01 · CONTAINER',inner);
     o+=`<ellipse cx="540" cy="900" rx="700" ry="700" fill="url(#redg)" opacity="${.35+.25*Math.sin(t*9)}"/>`;
@@ -162,7 +270,6 @@ const SCENES={
   },
   end(seg,lt,t){return `<rect width="${W}" height="${H}" fill="#05060c"/>`;}
 };
-
 const {segs,duration}=buildSchedule(SEGMENTS);
 window.DURATION=duration;
 const bars=[14,22,30,22,14];
@@ -190,7 +297,7 @@ window.renderAt=function(t){
   const sub=document.getElementById('sub');
   const c=seg.chunksT.find(c=>t>=c.start&&t<c.end+ (c===seg.chunksT[seg.chunksT.length-1]?0.4:0));
   if(seg.scene==='end'){sub.style.top='820px';sub.style.fontSize=c&&c.text.includes('TEIL')?'170px':'100px';} else {sub.style.top='1440px';sub.style.fontSize='100px';}
-  if(c){const a=Math.min(1,(t-c.start)/0.08);sub.innerHTML=fmtSub(c.text);sub.style.transform=`scale(${0.88+0.12*a})`;sub.style.opacity=a;}
+  if(c){const a=Math.min(1,(t-c.start)/0.08);sub.className='sub'+(c.speaker==='mehmet'?' m':'');sub.innerHTML=fmtSub(c.text);sub.style.transform=`scale(${0.88+0.12*a})`;sub.style.opacity=a;}
   else sub.innerHTML='';
   // Szenenwechsel-Blitz
   const fl=document.getElementById('flash');const k=Math.max(0,1-lt/0.12);
