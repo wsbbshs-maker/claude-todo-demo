@@ -1,0 +1,201 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  html,body{margin:0;background:#000}
+  .frame{width:1080px;height:1920px;position:relative;overflow:hidden;font-family:Inter,sans-serif;background:#0d0f24}
+  #art{position:absolute;inset:0;transform-origin:50% 50%}
+  svg{position:absolute;inset:0}
+  .hud{position:absolute;left:0;right:0;top:70px;height:190px;padding:0 56px;box-sizing:border-box;display:flex;justify-content:space-between;z-index:5}
+  .hudbg{position:absolute;left:0;right:0;top:0;height:330px;background:linear-gradient(#05060fee,#05060f00);z-index:4}
+  .tag{font-size:22px;font-weight:800;letter-spacing:3px;color:#c9cbe0}
+  .tag .dot{color:#ff3b4a}
+  .time{font-size:92px;font-weight:800;color:#fff;line-height:1;margin-top:6px;letter-spacing:-2px}
+  .time small{font-size:30px;letter-spacing:1px;margin-left:8px}
+  .loc{font-size:22px;font-weight:700;letter-spacing:4px;color:#9a9db8;margin-top:10px}
+  .right{text-align:right}
+  .val{font-size:92px;font-weight:800;line-height:1;margin-top:6px;color:#ffd21f;text-shadow:0 0 24px #ffd21f66;letter-spacing:-1px;display:flex;align-items:center;gap:20px;justify-content:flex-end;transform-origin:100% 50%}
+  .val.red{color:#ff3b4a;text-shadow:0 0 30px #ff3b4a99}
+  .bars{display:flex;gap:6px;align-items:center}.bars i{display:block;width:8px;background:currentColor;border-radius:2px}
+  .sub{position:absolute;left:40px;right:40px;top:1440px;text-align:center;font-size:100px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.05;text-shadow:0 6px 0 #000a,0 0 30px #000c;-webkit-text-stroke:14px #05060c;paint-order:stroke fill;z-index:6}
+  .sub b{color:#ffd21f}
+  .flash{position:absolute;inset:0;z-index:7;pointer-events:none}
+  .vign{position:absolute;inset:0;z-index:3;background:radial-gradient(ellipse at 50% 50%,transparent 55%,#000a 100%)}
+</style></head><body>
+<div class="frame"><div id="art"></div><div class="vign"></div><div class="hudbg" id="hudbg"></div><div id="hud"></div><div class="sub" id="sub"></div><div class="flash" id="flash"></div></div>
+<script src="timeline.js"></script>
+<script>
+const W=1080,H=1920,VX=540,VY=980;
+const DEFS=`<defs>
+<radialGradient id="glow"><stop offset="0" stop-color="#ffb347" stop-opacity=".85"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+<radialGradient id="end"><stop offset="0" stop-color="#3a2a5a"/><stop offset="1" stop-color="#0d0f24"/></radialGradient>
+<radialGradient id="mon"><stop offset="0" stop-color="#2a3a3a"/><stop offset="1" stop-color="#0c1414"/></radialGradient>
+<radialGradient id="redg"><stop offset="0" stop-color="#ff3b4a" stop-opacity=".55"/><stop offset="1" stop-color="#ff3b4a" stop-opacity="0"/></radialGradient>
+<filter id="noise"><feTurbulence baseFrequency=".9" numOctaves="2" seed="SEED"/><feColorMatrix values="0 0 0 0 .6  0 0 0 0 .8  0 0 0 0 .7  0 0 0 .2 0"/></filter>
+</defs>`;
+const rnd=(n)=>{const x=Math.sin(n*12.9898)*43758.5453;return x-Math.floor(x)};
+
+function figure(x,y,k,eyes='#fff'){ // dunkle Gestalt
+  return `<g transform="translate(${x} ${y}) scale(${k})"><rect x="-9" y="-60" width="18" height="50" rx="6" fill="#020308"/><circle cx="0" cy="-70" r="12" fill="#020308"/><circle cx="-4" cy="-71" r="1.9" fill="${eyes}"/><circle cx="4" cy="-71" r="1.9" fill="${eyes}"/><rect x="-7" y="-14" width="5" height="16" fill="#020308"/><rect x="2" y="-14" width="5" height="16" fill="#020308"/></g>`;
+}
+function tunnelBase(t,flick=0,showFig=true){
+  let o='';
+  for(let i=14;i>=0;i--){const tt=i/14, sc=Math.pow(tt,1.6)+0.04;const w=1500*sc,h=1500*sc,cy=VY+520*sc;const sh=Math.round(18+30*tt);
+    o+=`<path d="M ${VX-w/2} ${cy} L ${VX-w/2} ${cy-h*0.55} Q ${VX-w/2} ${cy-h} ${VX} ${cy-h} Q ${VX+w/2} ${cy-h} ${VX+w/2} ${cy-h*0.55} L ${VX+w/2} ${cy} Z" fill="rgb(${sh},${sh+4},${sh+38})" stroke="#0a0b1c" stroke-width="${3*sc+1}"/>`;}
+  o+=`<ellipse cx="${VX}" cy="${VY}" rx="70" ry="80" fill="url(#end)"/>`;
+  o+=`<path d="M ${VX-30} ${VY+40} L ${VX+30} ${VY+40} L ${W+300} ${H} L -300 ${H} Z" fill="#1c1d33"/>`;
+  o+=`<path d="M ${VX-30} ${VY+40} L ${VX-36} ${VY+40} L -330 ${H} L -300 ${H} Z" fill="#e8e6d8" opacity=".5"/><path d="M ${VX+30} ${VY+40} L ${VX+36} ${VY+40} L ${W+330} ${H} L ${W+300} ${H} Z" fill="#e8e6d8" opacity=".5"/>`;
+  for(let i=0;i<9;i++){const a=Math.pow(i/9,2),b=Math.pow((i+.5)/9,2);const y1=VY+40+a*(H-VY-40),y2=VY+40+b*(H-VY-40);
+    o+=`<path d="M ${VX-2-a*10} ${y1} L ${VX+2+a*10} ${y1} L ${VX+2+b*10} ${y2} L ${VX-2-b*10} ${y2} Z" fill="#ffd21f" opacity=".85"/>`;}
+  for(let i=1;i<14;i++){const tt=i/14, sc=Math.pow(tt,1.6)+0.04, cy=VY+520*sc-1500*sc*0.93;const lw=60*sc+4;
+    const on = flick && i===10 && Math.floor(t*9)%3===0 ? 0.15 : 1;
+    o+=`<circle cx="${VX}" cy="${cy}" r="${140*sc+10}" fill="url(#glow)" opacity="${.55*on}"/><rect x="${VX-lw/2}" y="${cy-6*sc-2}" width="${lw}" height="${12*sc+3}" rx="3" fill="#ffc96b" opacity="${on}"/>`;}
+  [[-1,0.55],[1,0.55],[-1,0.3],[1,0.3]].forEach(([s,tt])=>{const sc=Math.pow(tt,1.6)+0.04;const x=VX+s*560*sc,y=VY+40+(H-VY-40)*Math.pow(tt,1.1)*.85;const bw=46*sc*2.2,bh=150*sc*2.2;
+    o+=`<path d="M ${x-bw/2} ${y} L ${x-bw/4} ${y-bh} L ${x+bw/4} ${y-bh} L ${x+bw/2} ${y} Z" fill="#ff5a2a"/><rect x="${x-bw*0.38}" y="${y-bh*0.62}" width="${bw*0.76}" height="${bh*0.16}" fill="#f2f0e6"/><circle cx="${x}" cy="${y-bh-8*sc}" r="${10*sc+2}" fill="#ffd21f" opacity="${Math.floor(t*2)%2?1:.35}"/>`;});
+  if(showFig) o+=figure(VX+6,VY+30,1);
+  return o;
+}
+function jonas(x,y,k,opts={}){
+  const beam = opts.beam!==false ? `<path d="M 156 -425 L 760 -560 L 760 -300 Z" fill="#fff6c8" opacity=".12"/>` : '';
+  const ex = opts.look||0;
+  return `<g transform="translate(${x} ${y}) scale(${k})">
+   <rect x="-26" y="-250" width="20" height="250" rx="6" fill="#111" transform="rotate(${opts.step||0} -16 -250)"/><rect x="6" y="-250" width="20" height="250" rx="6" fill="#111" transform="rotate(${-(opts.step||0)} 16 -250)"/>
+   <path d="M -60 -260 Q -66 -470 0 -480 Q 66 -470 60 -260 Z" fill="#ff7a1f"/>
+   <rect x="-60" y="-350" width="120" height="16" fill="#f4f1e4"/><rect x="-60" y="-300" width="120" height="16" fill="#f4f1e4"/>
+   <path d="M -60 -440 Q -100 -380 -86 -300" stroke="#ff7a1f" stroke-width="26" fill="none" stroke-linecap="round"/>
+   <path d="M 60 -440 Q 104 -400 130 -420" stroke="#ff7a1f" stroke-width="26" fill="none" stroke-linecap="round"/>
+   <rect x="120" y="-436" width="34" height="22" rx="5" fill="#333"/><circle cx="154" cy="-425" r="8" fill="#fff6c8"/>${beam}
+   ${head(0,-560,1,ex,opts.wide)}
+  </g>`;
+}
+function head(x,y,k,ex=0,wide=false){
+  const r=wide?30:26, p=wide?8:11;
+  return `<g transform="translate(${x} ${y}) scale(${k})"><circle cx="0" cy="0" r="88" fill="#0a0a0a"/>
+   <path d="M -88 -25 Q -80 -100 0 -105 Q 80 -100 88 -25 Z" fill="#ffd21f"/><rect x="-96" y="-32" width="192" height="16" rx="8" fill="#e6b800"/>
+   <circle cx="-26" cy="15" r="${r}" fill="#fff"/><circle cx="30" cy="15" r="${r}" fill="#fff"/>
+   <circle cx="${-20+ex}" cy="12" r="${p}" fill="#000"/><circle cx="${36+ex}" cy="12" r="${p}" fill="#000"/>
+   <ellipse cx="4" cy="60" rx="${wide?9:12}" ry="${wide?11:7}" fill="#fff"/></g>`;
+}
+function monitorScreen(x,y,w,h,t,figScale,marker,label='CAM 04 · RÖHRE OST',inner=null){
+  let o=`<rect x="${x-40}" y="${y-40}" width="${w+80}" height="${h+80}" rx="26" fill="#1d1f2e" stroke="#2f3247" stroke-width="6"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="url(#mon)"/>`;
+  const id='c'+Math.round(x)+Math.round(y);
+  o+=`<clipPath id="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8"/></clipPath><g clip-path="url(#${id})">`;
+  if(inner){o+=inner;}else{
+    const cx=x+w/2;
+    for(let i=8;i>=0;i--){const tt=i/8, sc=.15+tt*.85;const ww=w*sc,hh=h*.94*sc,cy=y+h*.5+h*.38*sc;
+      o+=`<path d="M ${cx-ww/2} ${cy} L ${cx-ww/2} ${cy-hh*.5} Q ${cx-ww/2} ${cy-hh} ${cx} ${cy-hh} Q ${cx+ww/2} ${cy-hh} ${cx+ww/2} ${cy-hh*.5} L ${cx+ww/2} ${cy} Z" fill="rgb(${30+18*tt},${48+24*tt},${44+20*tt})"/>`;}
+    o+=`<path d="M ${cx-20} ${y+h*.64} L ${cx+20} ${y+h*.64} L ${x+w+40} ${y+h} L ${x-40} ${y+h} Z" fill="#203230"/>`;
+    const fy=y+h*.64+ (figScale-1)*h*.13;
+    if(marker){o+=`<ellipse cx="${cx}" cy="${fy+6}" rx="${70*figScale/2.5}" ry="${16*figScale/2.5}" fill="none" stroke="#ff3b4a" stroke-width="4" stroke-dasharray="10 8"/>`;}
+    if(figScale>0) o+=figure(cx,fy,figScale*1.4,'#e8fff4');
+  }
+  o+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" filter="url(#noise)"/>`;
+  for(let i=0;i<h/17;i++) o+=`<rect x="${x}" y="${y+i*17}" width="${w}" height="3" fill="#000" opacity=".18"/>`;
+  const roll=(t*120)%h; o+=`<rect x="${x}" y="${y+roll}" width="${w}" height="40" fill="#fff" opacity=".04"/>`;
+  o+=`</g><text x="${x+30}" y="${y+50}" font-family="DejaVu Sans Mono" font-size="30" fill="#e8fff4">${label}</text>`;
+  if(Math.floor(t*2)%2===0) o+=`<circle cx="${x+w-110}" cy="${y+40}" r="11" fill="#ff3b4a"/>`;
+  o+=`<text x="${x+w-90}" y="${y+51}" font-family="DejaVu Sans Mono" font-size="30" fill="#ff3b4a">REC</text>`;
+  return o;
+}
+function camScene(seg,lt,t){
+  let o=`<rect width="${W}" height="${H}" fill="#111326"/><rect x="0" y="1380" width="${W}" height="540" fill="#2a2140"/><rect x="0" y="1380" width="${W}" height="18" fill="#3b3058"/>`;
+  o+=`<rect x="500" y="1280" width="80" height="100" fill="#1d1f2e"/>`;
+  o+=monitorScreen(130,560,820,680,t,seg.camScale,seg.marker);
+  if(seg.marker) o+=`<g transform="translate(540 ${560+680*.64+(seg.camScale-1)*680*.13+70})"><rect x="-150" y="0" width="300" height="56" rx="28" fill="#ff3b4a"/><text x="0" y="38" text-anchor="middle" font-family="Inter" font-weight="800" font-size="28" fill="#fff">HIER STAND ICH</text></g>`;
+  o+=`<ellipse cx="540" cy="1000" rx="700" ry="600" fill="#3ad6a0" opacity=".05"/>`;
+  return o;
+}
+const SCENES={
+  monitorWall(seg,lt,t){
+    let o=`<rect width="${W}" height="${H}" fill="#0f1122"/><rect x="0" y="1450" width="${W}" height="470" fill="#2a2140"/>`;
+    const cams=[[60,520,'CAM 01'],[560,520,'CAM 02'],[60,950,'CAM 03'],[560,950,'CAM 04']];
+    cams.forEach(([x,y,l],i)=>{
+      if(i<3){o+=`<rect x="${x}" y="${y}" width="460" height="380" rx="14" fill="#1d1f2e"/><rect x="${x+20}" y="${y+20}" width="420" height="340" rx="6" fill="#16241f"/>
+        <path d="M ${x+130} ${y+360} L ${x+210} ${y+170} L ${x+250} ${y+170} L ${x+330} ${y+360} Z" fill="#203230"/><text x="${x+36}" y="${y+56}" font-family="DejaVu Sans Mono" font-size="22" fill="#cfe">${l}</text>`;}
+      else{const fl = rnd(Math.floor(t*14))>.7?.25:1;
+        o+=`<g opacity="${fl}">`+monitorScreen(x+20,y+20,420,340,t,0.8,false,'CAM 04')+`</g>`;
+        o+=`<rect x="${x+8}" y="${y+8}" width="444" height="364" rx="12" fill="none" stroke="#ff3b4a" stroke-width="6" opacity="${.5+.5*Math.sin(t*6)}"/>`;}
+    });
+    o+=`<ellipse cx="770" cy="1140" rx="420" ry="360" fill="url(#redg)" opacity=".5"/>`;
+    return o;
+  },
+  tunnel(seg,lt,t){return tunnelBase(t)+jonas(250,1880,1.25);},
+  cam:camScene,
+  tunnelWalk(seg,lt,t){
+    const step=Math.sin(lt*7)*8;
+    return tunnelBase(t,1,false)+jonas(560,1900+Math.abs(Math.sin(lt*7))*-8,1.15,{step,look:Math.sin(lt*1.5)*8});
+  },
+  radio(seg,lt,t){
+    const red=seg.red;
+    let o=`<rect width="${W}" height="${H}" fill="${red?'#1a0d18':'#111326'}"/><rect x="0" y="1380" width="${W}" height="540" fill="#2a2140"/>`;
+    o+=`<ellipse cx="540" cy="1000" rx="600" ry="700" fill="${red?'url(#redg)':'#3a3f70'}" opacity="${red?.6+.3*Math.sin(t*8):.25}"/>`;
+    // Jonas Oberkörper mit Funkgerät
+    o+=`<g transform="translate(540 2050) scale(1.6)"><path d="M -150 0 Q -160 -420 0 -440 Q 160 -420 150 0 Z" fill="#ff7a1f"/>
+      <rect x="-150" y="-300" width="300" height="26" fill="#f4f1e4"/><rect x="-150" y="-220" width="300" height="26" fill="#f4f1e4"/>
+      <path d="M 120 -380 Q 230 -420 200 -560" stroke="#ff7a1f" stroke-width="56" fill="none" stroke-linecap="round"/>
+      <rect x="150" y="-700" width="70" height="150" rx="14" fill="#222"/><rect x="190" y="-770" width="10" height="80" fill="#222"/><rect x="160" y="-680" width="50" height="30" rx="4" fill="${red?'#ff3b4a':'#4be38c'}" opacity="${.6+.4*Math.sin(t*10)}"/>
+      ${head(0,-560,1.1,red?-10:8,red)}</g>`;
+    // Funk-Overlay
+    const bars=Array.from({length:22},(_,i)=>{const h=8+Math.abs(Math.sin(t*14+i*1.3))*38*(red?.6:1);return `<rect x="${330+i*16}" y="${720-h/2}" width="8" height="${h}" rx="3" fill="${red?'#ff8a94':'#e8e8f0'}"/>`}).join('');
+    o+=`<g><rect x="140" y="560" width="800" height="230" rx="22" fill="#0b0c18" stroke="${red?'#ff3b4a':'#3b3f66'}" stroke-width="4" opacity=".95"/>
+      <text x="300" y="625" font-family="Inter" font-weight="800" font-size="24" letter-spacing="4" fill="#9a9db8">FUNK · KANAL 2</text>
+      <text x="300" y="678" font-family="Inter" font-weight="800" font-size="44" fill="#fff">${seg.radio}</text>${bars}
+      <g transform="translate(215 675)" stroke="${red?'#ff3b4a':'#ffd21f'}" stroke-width="7" fill="none" stroke-linecap="round"><circle r="9" fill="${red?'#ff3b4a':'#ffd21f'}" stroke="none"/><path d="M -28 -28 A 40 40 0 0 0 -28 28"/><path d="M 28 -28 A 40 40 0 0 1 28 28"/><path d="M -48 -46 A 66 66 0 0 0 -48 46"/><path d="M 48 -46 A 66 66 0 0 1 48 46"/></g></g>`;
+    return o;
+  },
+  face(seg,lt,t){
+    let o=`<rect width="${W}" height="${H}" fill="#14102a"/><ellipse cx="540" cy="1000" rx="700" ry="700" fill="#3ad6a0" opacity="${.08+.04*Math.sin(t*20)}"/>`;
+    o+=`<g transform="translate(540 1960) scale(1.9)"><path d="M -150 0 Q -160 -300 0 -320 Q 160 -300 150 0 Z" fill="#ff7a1f"/><rect x="-150" y="-200" width="300" height="26" fill="#f4f1e4"/></g>`;
+    o+=head(540,1000+Math.sin(lt*30)*2,4.2,0,true);
+    // Monitor-Reflexion in den Augen
+    o+=`<rect x="410" y="1040" width="22" height="16" fill="#3ad6a0" opacity=".7"/><rect x="645" y="1040" width="22" height="16" fill="#3ad6a0" opacity=".7"/>`;
+    return o;
+  },
+  behind(seg,lt,t){
+    const inner=`<rect x="130" y="560" width="820" height="680" fill="#1d2a28"/><rect x="130" y="1060" width="820" height="180" fill="#26332f"/>
+      <rect x="420" y="760" width="300" height="220" rx="10" fill="#0e1513"/><rect x="440" y="780" width="260" height="180" fill="#2f4a42"/>
+      <g transform="translate(560 1240) scale(.62)"><path d="M -150 0 Q -160 -420 0 -440 Q 160 -420 150 0 Z" fill="#7a8a70"/><rect x="-150" y="-300" width="300" height="26" fill="#b8c4b0"/><circle cx="0" cy="-560" r="130" fill="#0a0d0c"/><path d="M -130 -590 Q -120 -700 0 -705 Q 120 -700 130 -590 Z" fill="#a6b36a"/></g>
+      <g transform="translate(760 1240)">${figure(0,0,4.8,'#e8fff4').replace('<g transform="translate(0 0) scale(4.8)">','<g transform="scale(4.8)">')}</g>`;
+    let o=`<rect width="${W}" height="${H}" fill="#120a14"/><rect x="0" y="1380" width="${W}" height="540" fill="#2a1428"/>`;
+    o+=monitorScreen(130,560,820,680,t,0,false,'CAM 01 · CONTAINER',inner);
+    o+=`<ellipse cx="540" cy="900" rx="700" ry="700" fill="url(#redg)" opacity="${.35+.25*Math.sin(t*9)}"/>`;
+    return o;
+  },
+  end(seg,lt,t){return `<rect width="${W}" height="${H}" fill="#05060c"/>`;}
+};
+
+const {segs,duration}=buildSchedule(SEGMENTS);
+window.DURATION=duration;
+const bars=[14,22,30,22,14];
+function fmtSub(c){return c.replace(/\*(.+?)\*/g,'<b>$1</b>');}
+window.renderAt=function(t){
+  const seg=segs.find(s=>t>=s.start&&t<s.end)||segs[segs.length-1];
+  const lt=t-seg.start, sd=seg.end-seg.start;
+  // langsamer Kamera-Zoom pro Szene
+  const z=1+0.06*(lt/sd);
+  const shake = seg.red||seg.scene==='behind' ? `translate(${(rnd(t*30)-.5)*8}px,${(rnd(t*31)-.5)*8}px)` : '';
+  document.getElementById('art').style.transform=`scale(${z}) ${shake}`;
+  document.getElementById('art').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${DEFS.replace('SEED',Math.floor(t*12)%50)}${SCENES[seg.scene](seg,lt,t)}</svg>`;
+  // HUD
+  const hudEl=document.getElementById('hud');document.getElementById('hudbg').style.display=seg.hud?'block':'none';
+  if(seg.hud){const h=seg.hud;let val=h.val, pop=1;
+    if(seg.jumpFrom&&lt<0.5){val=seg.jumpFrom}
+    if(seg.jumpFrom&&lt>=0.5&&lt<0.8){pop=1+0.35*(1-(lt-0.5)/0.3)}
+    let red=h.red; if(seg.scene==='behind') red=true;
+    const op = red? (.65+.35*Math.abs(Math.sin(t*6))):1;
+    const bh=bars.map((b,i)=>`<i style="height:${b*(0.6+0.4*Math.abs(Math.sin(t*8+i)))}px"></i>`).join('');
+    hudEl.innerHTML=`<div class="hud"><div><div class="tag"><span class="dot" style="opacity:${Math.floor(t*2)%2?1:.3}">●</span> SCHICHT 3</div><div class="time">${h.time}<small>UHR</small></div><div class="loc">${h.loc}</div></div>
+    <div class="right"><div class="tag">ABSTAND</div><div class="val ${red?'red':''}" style="transform:scale(${pop});opacity:${op}"><span class="bars">${bh}</span>${val}</div></div></div>`;
+  } else hudEl.innerHTML='';
+  // Untertitel
+  const sub=document.getElementById('sub');
+  const c=seg.chunksT.find(c=>t>=c.start&&t<c.end+ (c===seg.chunksT[seg.chunksT.length-1]?0.4:0));
+  if(seg.scene==='end'){sub.style.top='820px';sub.style.fontSize=c&&c.text.includes('TEIL')?'170px':'100px';} else {sub.style.top='1440px';sub.style.fontSize='100px';}
+  if(c){const a=Math.min(1,(t-c.start)/0.08);sub.innerHTML=fmtSub(c.text);sub.style.transform=`scale(${0.88+0.12*a})`;sub.style.opacity=a;}
+  else sub.innerHTML='';
+  // Szenenwechsel-Blitz
+  const fl=document.getElementById('flash');const k=Math.max(0,1-lt/0.12);
+  fl.style.background=`rgba(255,255,255,${0.18*k})`;
+  if(seg.jumpFrom&&lt>=0.5&&lt<0.65) fl.style.background=`rgba(255,210,31,${0.15*(1-(lt-0.5)/0.15)})`;
+};
+window.renderAt(parseFloat(new URLSearchParams(location.search).get('t')||'1'));
+</script></body></html>
