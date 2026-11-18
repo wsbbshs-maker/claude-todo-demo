@@ -21,8 +21,14 @@ const SEGMENTS = [
     chunks: ['*200 METER*', '*100*', '*50*'] },
   { scene: 'beam', flicker: true, allOut: true, exit: true, hud: { time: '03:18', loc: 'RÖHRE OST', label: 'AKKU', val: '3 %', red: true },
     chunks: ['DANN *FLACKERT*', 'DIE TASCHENLAMPE', '*EINMAL*', '*ZWEIMAL*'] },
-  { scene: 'two', hud: { time: '03:18', loc: 'RÖHRE OST', label: 'ABSTAND', val: '?? M', red: true },
-    chunks: ['ALS DAS LICHT', 'WIEDERKOMMT', 'SIND ES *ZWEI*'], tail: 1.4 },
+  { scene: 'neck', hud: { time: '03:18', loc: 'RÖHRE OST', label: 'HINTER DIR', val: '0 M', red: true },
+    chunks: ['UND DANN', '*SPÜRE* ICH ES', '*WARMER ATEM*', 'IN MEINEM *NACKEN*'], tail: 0.6 },
+  { scene: 'mimeReveal', hud: { time: '03:18', loc: 'RÖHRE OST', label: 'HINTER DIR', val: '0 M', red: true },
+    chunks: ['HINTER MIR', 'STEHT *JEMAND*', '*KREIDEWEISSES* GESICHT', '*SCHWARZE* LIPPEN', 'EIN *PANTOMIME*'] },
+  { scene: 'mimeClose', hud: { time: '03:19', loc: 'RÖHRE OST', label: 'HINTER DIR', val: '0 M', red: true },
+    chunks: ['ER SAGT', '*KEIN WORT*', 'ER LEGT NUR', 'DEN *FINGER*', 'AUF DIE *LIPPEN*'] },
+  { scene: 'between', hud: { time: '03:19', loc: 'RÖHRE OST', label: 'ABSTAND', val: '?? M', red: true },
+    chunks: ['VOR MIR', 'DER *CLOWN*', 'HINTER MIR', 'DER *PANTOMIME*', 'ICH MUSS', 'HIER *RAUS*', 'ABER ICH KANN NUR', '*EINEN* ANSCHAUEN'], tail: 1.4 },
   { scene: 'end', hud: null, chunks: ['*TEIL 3*', 'MORGEN'], tail: 1.0 },
 ];
 

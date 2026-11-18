@@ -163,6 +163,26 @@ for i, s in enumerate(segs):
         if s.get('exit'): add(musicbox(d, 2), a, 0.15)
     elif sc == 'two':
         add(hit(40,3.5), s.get('reveal',a+d*0.45), 1.0); add(dissonance(d*0.6), s.get('reveal',a+d*0.45), 0.22); add(musicbox(d*0.6, 0), s.get('reveal',a+d*0.45), 0.35)
+    elif sc == 'neck':
+        k=0.4
+        while k<d-0.5:
+            b=bandnoise(1.0,150,1800)*np.sin(np.linspace(0,np.pi,int(1.0*SR)))**3
+            add(b, a+k, 0.55, 0.7); k+=1.25
+        k=0.1; rate=0.8
+        while k<d: add(heartbeat(), a+k, 0.7); k+=rate; rate*=0.96
+    elif sc == 'mimeReveal':
+        add(hit(45,3.0), a+0.05, 0.95); add(dissonance(d), a, 0.16); add(musicbox(d, 6), a+0.5, 0.2)
+    elif sc == 'mimeClose':
+        cs_ = s.get('psst', a+d*0.5)
+        ps=bandnoise(1.1,2500,9000)*env(int(1.1*SR),0.15,0.6)
+        add(ps, cs_, 0.5)
+        tt=t_(d); add(np.sin(2*np.pi*1975*tt)*env(len(tt),0.8,0.5)*0.15, a, 1.0)
+    elif sc == 'between':
+        k=0.0; rate=0.62
+        while k<d: add(heartbeat(), a+k, 0.8); k+=rate; rate=max(0.4,rate*0.97)
+        k=0.0
+        while k<d-0.3: add(whoosh(0.3), a+k, 0.5, 0.6 if int(k/1.15)%2 else -0.6); k+=1.15
+        add(musicbox(d, 3), a, 0.22); add(riser(d), a, 0.4)
     elif sc == 'behind':
         add(hit(42, 3.5), a, 1.0); add(dissonance(d + 0.5), a, 0.18); add(static(d, 1000, 9000), a, 0.12)
     elif sc == 'end':

@@ -1,5 +1,5 @@
 {
- "duration": 51.5076923076923,
+ "duration": 70.03076923076922,
  "segs": [
   {
    "scene": "balloon",
@@ -102,20 +102,50 @@
    "exit": true
   },
   {
-   "scene": "two",
+   "scene": "neck",
    "start": 45.23846153846154,
-   "end": 49.40769230769231,
+   "end": 49.45384615384616,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "mimeReveal",
+   "start": 49.45384615384616,
+   "end": 55.36538461538461,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "mimeClose",
+   "start": 55.36538461538461,
+   "end": 59.75,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "reveal": 47.08461538461539
+   "psst": 56.607692307692304
+  },
+  {
+   "scene": "between",
+   "start": 59.75,
+   "end": 67.93076923076923,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
   },
   {
    "scene": "end",
-   "start": 49.40769230769231,
-   "end": 51.5076923076923,
+   "start": 67.93076923076923,
+   "end": 70.03076923076922,
    "jump": false,
    "red": false,
    "lampsOut": false,

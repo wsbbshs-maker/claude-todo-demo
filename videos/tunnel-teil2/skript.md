@@ -1,7 +1,7 @@
 # Schicht im Tunnel – Teil 2
 
-**Länge:** ca. 60 s (5 s Rückblick aus Teil 1 + ca. 55 s neu) · **Cliffhanger:** „Sind es zwei.“
-**Neue Elemente:** Killer-Clown, roter Luftballon, Zeitungsausschnitt von 1994, Verfolgungsjagd, Regel aus Teil 1 wird zur Überlebensstrategie.
+**Länge:** ca. 70–75 s (5 s Rückblick aus Teil 1 + ca. 70 s neu) · **Cliffhanger:** „Aber ich kann nur einen anschauen.“
+**Neue Elemente:** Killer-Clown, Pantomime, roter Luftballon, Zeitungsausschnitt von 1994, Verfolgungsjagd, Regel aus Teil 1 wird zur Überlebensstrategie.
 
 | # | Szene | HUD rechts | Bild | Sprecher | Text |
 |---|---|---|---|---|---|
@@ -16,5 +16,8 @@
 | 8 | Lampen gehen aus | NOTAUSGANG 400→250 M | Hinter dem Clown erlischt eine Lampe nach der anderen | Jonas | Hinter ihm gehen die Lampen aus. Eine nach der anderen. |
 | 9 | Countdown | NOTAUSGANG 200→50 M | Grünes Notausgang-Schild kommt näher | Jonas | Zweihundert Meter. Hundert. Fünfzig. |
 | 10 | Flackern | AKKU 3 % (rot) | Taschenlampe flackert, im Dunkeln nur leuchtende Augen | Jonas | Dann flackert die Taschenlampe. Einmal. Zweimal. |
-| 11 | Twist | ABSTAND ?? M | Schwarz … Licht an: **zwei** Clowns | Jonas | Als das Licht wiederkommt, sind es zwei. |
-| 12 | Ende | – | „TEIL 3“ | Jonas | Teil drei … morgen. |
+| 11 | Atem im Nacken | HINTER DIR 0 M | Großaufnahme Jonas, Augen ganz nach rechts, Atemwolken von hinten, am Rand blitzt ein weißes Gesicht | Jonas | Und dann spüre ich es. Warmer Atem. In meinem Nacken. |
+| 12 | Pantomime | HINTER DIR 0 M | Bleiches Pantomimen-Gesicht taucht hinter Jonas' Schulter auf | Jonas | Hinter mir steht jemand. Kreideweißes Gesicht. Schwarze Lippen. Ein Pantomime. |
+| 13 | „Psst“ | HINTER DIR 0 M | Großaufnahme: Pantomime legt den Finger auf die Lippen | Jonas | Er sagt kein Wort. Er legt nur den Finger auf die Lippen. |
+| 14 | Dazwischen | ABSTAND ?? M | Jonas zwischen Clown und Pantomime, Lampe schwenkt hin und her – wer im Dunkeln ist, kommt näher | Jonas | Vor mir der Clown. Hinter mir der Pantomime. Ich muss hier raus. Aber ich kann nur einen anschauen. |
+| 15 | Ende | – | „TEIL 3“ | Jonas | Teil drei … morgen. |

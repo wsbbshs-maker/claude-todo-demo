@@ -414,6 +414,89 @@ Object.assign(SCENES,{
   },
 });
 
+// ===== Teil 2: Pantomime =====
+const MI_DEFS=`<defs><pattern id="mstripe" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#f1efe8"/><rect width="40" height="18" fill="#111"/></pattern>
+ <radialGradient id="pale"><stop offset="0" stop-color="#ffffff"/><stop offset=".75" stop-color="#ecebe4"/><stop offset="1" stop-color="#c9c7bd"/></radialGradient>
+ <radialGradient id="paleglow"><stop offset="0" stop-color="#f1efe8" stop-opacity=".35"/><stop offset="1" stop-color="#f1efe8" stop-opacity="0"/></radialGradient></defs>`;
+function mimeFace(o={}){ // Ursprung = Kopfmitte, Radius 100
+  const p={lx:0,ly:0,smile:0.3,glow:0,...o};
+  return `${p.glow?`<circle r="220" fill="url(#paleglow)" opacity="${p.glow}"/>`:''}
+   <ellipse cx="0" cy="8" rx="98" ry="112" fill="url(#pale)"/>
+   <path d="M -96 -30 Q -60 -150 20 -138 Q 110 -128 104 -40 Q 40 -70 -96 -30 Z" fill="#111"/>
+   <circle cx="54" cy="-118" r="12" fill="#111"/>
+   <path d="M -42 -52 L -42 52 M 42 -52 L 42 52" stroke="#111" stroke-width="5"/>
+   <ellipse cx="-42" cy="0" rx="24" ry="30" fill="#111"/><ellipse cx="42" cy="0" rx="24" ry="30" fill="#111"/>
+   <circle cx="${-42+p.lx}" cy="${2+p.ly}" r="5" fill="#f1efe8"/><circle cx="${42+p.lx}" cy="${2+p.ly}" r="5" fill="#f1efe8"/>
+   <path d="M -48 40 q -6 18 0 26 q 6 -8 0 -26 Z" fill="#111"/>
+   <ellipse cx="-68" cy="38" rx="16" ry="9" fill="#d9a3a8" opacity=".5"/><ellipse cx="68" cy="38" rx="16" ry="9" fill="#d9a3a8" opacity=".5"/>
+   <path d="M -26 70 Q 0 ${70+26*p.smile} 26 70 Q 0 ${78+12*p.smile} -26 70 Z" fill="#111"/>`;
+}
+function mime(o,t){ // Ursprung = Füße, Höhe ca. 760
+  const p={tilt:0,finger:0,glow:0,lx:0,...o};
+  const hx=lerp(150,22,p.finger), hy=lerp(-330,-578,p.finger);
+  return MI_DEFS+`<ellipse cx="0" cy="0" rx="150" ry="22" fill="#000" opacity=".35"/>
+   <ellipse cx="-44" cy="-12" rx="50" ry="18" fill="#111"/><ellipse cx="44" cy="-12" rx="50" ry="18" fill="#111"/>
+   <rect x="-56" y="-300" width="44" height="290" rx="14" fill="#111"/><rect x="12" y="-300" width="44" height="290" rx="14" fill="#111"/>
+   <path d="M -100 -290 Q -110 -520 0 -540 Q 110 -520 100 -290 Z" fill="url(#mstripe)"/>
+   <path d="M -60 -530 L -50 -290 M 60 -530 L 50 -290" stroke="#111" stroke-width="14"/>
+   <path d="M -90 -500 Q -140 -400 -140 -300" stroke="url(#mstripe)" stroke-width="40" fill="none" stroke-linecap="round"/>
+   <circle cx="-140" cy="-292" r="26" fill="#f4f4f4"/>
+   <path d="M 90 -500 Q ${hx+60} ${(hy-500)/2} ${hx} ${hy+20}" stroke="url(#mstripe)" stroke-width="40" fill="none" stroke-linecap="round"/>
+   <circle cx="${hx}" cy="${hy}" r="26" fill="#f4f4f4"/>
+   ${p.finger>0.5?`<rect x="${hx-7}" y="${hy-72}" width="15" height="62" rx="7" fill="#f4f4f4"/>`:''}
+   <rect x="-26" y="-575" width="52" height="40" fill="#e6e4dc"/>
+   <g transform="translate(0 -660) rotate(${p.tilt})">${mimeFace({glow:p.glow,lx:p.lx})}</g>`;
+}
+Object.assign(SCENES,{
+  neck(seg,lt,t){
+    const sd=seg.end-seg.start, sp=speech(seg,t), cs=seg.chunksT;
+    let o=tunnelBase(t,0,false,()=>0)+`<rect width="${W}" height="${H}" fill="#03030a" opacity=".6"/>`;
+    o+=headAndBody(430,1180,2.5,{lx:16,ly:-2,scared:1,sweat:1,open:sp.who==='jonas'?sp.open:0,blink:0},t);
+    for(let k=0;k<3;k++){const ph=((t*0.8+k/3)%1); const x=lerp(1000,760,ph), y=1000-ph*60, r=30+ph*90;
+      o+=`<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.6}" fill="#e8ecff" opacity="${(1-ph)*.28}" filter="url(#noise)"/><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.6}" fill="#e8ecff" opacity="${(1-ph)*.18}"/>`;}
+    if(t>=cs[cs.length-1].start){const k=ease((t-cs[cs.length-1].start)/1.2);
+      o+=`<g transform="translate(${lerp(1200,1010,k)} 820) scale(1.6)">${MI_DEFS}${mimeFace({lx:-8})}</g>`;}
+    return o;
+  },
+  mimeReveal(seg,lt,t){
+    const sd=seg.end-seg.start, sp=speech(seg,t), k=ease(lt/1.4);
+    let o=tunnelBase(t,0,false,()=>0)+`<rect width="${W}" height="${H}" fill="#03030a" opacity=".7"/>`;
+    o+=`<g transform="translate(${lerp(900,770,k)} ${lerp(900,820,k)}) scale(2.3) rotate(${-8-ease(lt/sd)*10})" opacity="${k}">${MI_DEFS}${mimeFace({glow:.8,lx:-10,smile:ease(lt/sd)})}</g>`;
+    o+=headAndBody(400,1230,2.2,{lx:14,ly:-1,scared:1,sweat:1,open:sp.who==='jonas'?sp.open:0,blink:0},t);
+    o+=`<rect width="${W}" height="${H}" fill="#ff1e3c" opacity="${.06+.05*Math.sin(t*5)}"/>`;
+    return o;
+  },
+  mimeClose(seg,lt,t){
+    const sd=seg.end-seg.start, cs=seg.chunksT;
+    const f = t>=cs[2].start ? ease((t-cs[2].start)/1.6) : 0;
+    let o=`<rect width="${W}" height="${H}" fill="#050508"/><circle cx="540" cy="950" r="560" fill="#f1efe8" opacity=".05"/>`;
+    o+=`<g transform="translate(540 880) scale(${3.4+lt*0.05}) rotate(${-6+Math.sin(t*.7)*2})">${MI_DEFS}${mimeFace({lx:0,ly:0,smile:0.5})}</g>`;
+    const hx=lerp(820,560,f), hy=lerp(1800,1300,f);
+    o+=`<path d="M 1100 2000 Q 900 1700 ${hx+40} ${hy+120}" stroke="url(#mstripe)" stroke-width="150" fill="none" stroke-linecap="round"/>
+        <rect x="${hx-24}" y="${hy-190}" width="50" height="220" rx="25" fill="#f4f4f4" stroke="#111" stroke-width="8"/><circle cx="${hx}" cy="${hy+40}" r="85" fill="#f4f4f4" stroke="#111" stroke-width="8"/><rect x="${hx-20}" y="${hy-186}" width="42" height="160" rx="21" fill="#f4f4f4"/>
+        <path d="M ${hx-60} ${hy+40} q 0 -40 40 -40" stroke="#d6d4cc" stroke-width="10" fill="none"/>`;
+    return o;
+  },
+  between(seg,lt,t){
+    const sd=seg.end-seg.start, sp=speech(seg,t);
+    const period=1.15, n=Math.floor(lt/period), side=n%2; // 0 = Clown angeleuchtet, 1 = Pantomime
+    const swing=ease(((lt%period)/period)*4);
+    const target = side? lerp(-1,1,swing) : lerp(1,-1,swing);
+    const creepC=Math.ceil(n/2)*0.06, creepM=Math.floor(n/2+0.5)*0.06;
+    let o=tunnelBase(t,0,false,()=>0)+`<rect width="${W}" height="${H}" fill="#03030a" opacity=".55"/>`;
+    const cx=lerp(230,330,creepC*4), mx=lerp(850,750,creepM*4);
+    o+=`<g transform="translate(${cx} ${1520+creepC*300}) scale(${.62+creepC})">${clown({glow:side?1:0,tilt:10},t)}</g>`;
+    o+=`<g transform="translate(${mx} ${1540+creepM*300}) scale(${.6+creepM})">${mime({glow:side?0:.6,tilt:-12,lx:-6},t)}</g>`;
+    const ang = target<0? 200 : -20, bx=540+target*60;
+    o+=`<path d="M ${bx} 1360 L ${540+target*700} ${1000} L ${540+target*700} ${1560} Z" fill="#fff6c8" opacity=".24"/>`;
+    o+=`<g transform="translate(540 1960) scale(1.05)">${jonasBody({armR:[target<0?120:60, target<0?190:-15], armL:[100,95], flash:false, step:Math.sin(t*10)*6,
+        face:{lx:target*14,ly:0,scared:1,sweat:1,open:sp.who==='jonas'?sp.open:0}},t)}</g>`;
+    if(side) o+=`<rect x="0" y="0" width="420" height="${H}" fill="#000" opacity=".35"/>`; else o+=`<rect x="660" y="0" width="420" height="${H}" fill="#000" opacity=".35"/>`;
+    o+=`<rect width="${W}" height="${H}" fill="#ff1e3c" opacity="${.07+.06*Math.sin(t*8)}"/>`;
+    return o;
+  },
+});
+
 const {segs,duration}=buildSchedule(SEGMENTS);
 window.DURATION=duration;
 const bars=[14,22,30,22,14];
@@ -423,7 +506,7 @@ window.renderAt=function(t){
   const lt=t-seg.start, sd=seg.end-seg.start;
   // langsamer Kamera-Zoom pro Szene
   const z=1+0.06*(lt/sd);
-  const shake = seg.red||['behind','two','clownReveal','run'].includes(seg.scene) ? `translate(${(rnd(t*30)-.5)*8}px,${(rnd(t*31)-.5)*8}px)` : '';
+  const shake = seg.red||['behind','two','clownReveal','run','mimeReveal','between'].includes(seg.scene) ? `translate(${(rnd(t*30)-.5)*8}px,${(rnd(t*31)-.5)*8}px)` : '';
   document.getElementById('art').style.transform=`scale(${z}) ${shake}`;
   document.getElementById('art').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${DEFS.replace('SEED',Math.floor(t*12)%50)}${SCENES[seg.scene](seg,lt,t)}</svg>`;
   // HUD
