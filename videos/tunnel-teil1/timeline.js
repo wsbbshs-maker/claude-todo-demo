@@ -39,7 +39,14 @@ const SEGMENTS = [
 ];
 
 // Zeitplan berechnen (Schätzung ~13 Zeichen/Sek. + Pausen)
-function buildSchedule(segs, words) {
+function buildSchedule(segs, timing) {
+  timing = timing || (typeof TIMING !== 'undefined' ? TIMING : null);
+  if (timing) { // echtes Timing aus der Sprachaufnahme (voice.py)
+    return { duration: timing.duration + 0.4, segs: segs.map((s, i) => {
+      const tm = timing.segs[i];
+      return { ...s, start: tm.start, end: i === segs.length - 1 ? timing.duration + 0.4 : tm.end, chunksT: tm.chunks };
+    }) };
+  }
   let t = 0.3;
   const out = [];
   segs.forEach((s, i) => {
