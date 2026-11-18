@@ -1,0 +1,126 @@
+{
+ "duration": 51.5076923076923,
+ "segs": [
+  {
+   "scene": "balloon",
+   "start": 0.2,
+   "end": 4.0346153846153845,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "clownReveal",
+   "start": 4.0346153846153845,
+   "end": 9.034615384615384,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "face",
+   "start": 9.034615384615384,
+   "end": 11.26153846153846,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "newspaper",
+   "start": 11.26153846153846,
+   "end": 19.26153846153846,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "run",
+   "start": 19.26153846153846,
+   "end": 20.853846153846153,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "radio",
+   "start": 20.853846153846153,
+   "end": 29.22692307692308,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "beam",
+   "start": 29.22692307692308,
+   "end": 34.91923076923077,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "beam",
+   "start": 34.91923076923077,
+   "end": 39.21538461538462,
+   "jump": false,
+   "red": false,
+   "lampsOut": true,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "beam",
+   "start": 39.21538461538462,
+   "end": 41.45769230769231,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": true
+  },
+  {
+   "scene": "beam",
+   "start": 41.45769230769231,
+   "end": 45.23846153846154,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": true,
+   "exit": true
+  },
+  {
+   "scene": "two",
+   "start": 45.23846153846154,
+   "end": 49.40769230769231,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "reveal": 47.08461538461539
+  },
+  {
+   "scene": "end",
+   "start": 49.40769230769231,
+   "end": 51.5076923076923,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  }
+ ]
+}
