@@ -1,0 +1,55 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}svg{display:block}</style></head><body>
+<script>
+const v = new URLSearchParams(location.search).get('v') || 'a';
+const stars = Array.from({length:40},(_,i)=>{const x=(Math.sin(i*91.7)*0.5+0.5)*1024,y=(Math.sin(i*37.3)*0.5+0.5)*560,r=1.5+((i*7)%3);return `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity="${.25+((i*13)%5)/10}"/>`}).join('');
+const defs = `<defs>
+ <radialGradient id="bg" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#2a2160"/><stop offset=".55" stop-color="#151538"/><stop offset="1" stop-color="#090a1c"/></radialGradient>
+ <radialGradient id="light" cx="50%" cy="100%" r="80%"><stop offset="0" stop-color="#ffd21f" stop-opacity=".75"/><stop offset=".5" stop-color="#ffb347" stop-opacity=".18"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+ <linearGradient id="page" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff6dc"/><stop offset="1" stop-color="#e9dcb8"/></linearGradient>
+</defs>`;
+// Berge im Hintergrund (wie im Video)
+const mountains = `<path d="M0 760 L120 600 L220 700 L340 540 L470 720 L600 580 L720 700 L860 560 L1024 740 L1024 1024 L0 1024 Z" fill="#232457"/>
+ <path d="M0 820 L160 690 L300 800 L450 680 L620 820 L780 700 L920 800 L1024 740 L1024 1024 L0 1024 Z" fill="#1b1b44"/>`;
+
+function book(){ // offenes Buch, Ursprung = Buchrücken unten
+  return `<g>
+   <path d="M -360 40 Q -180 -10 0 50 Q 180 -10 360 40 L 360 90 Q 180 40 0 100 Q -180 40 -360 90 Z" fill="#7a3b1f"/>
+   <path d="M -340 -230 Q -170 -290 0 -220 L 0 60 Q -170 -10 -340 50 Z" fill="url(#page)"/>
+   <path d="M 340 -230 Q 170 -290 0 -220 L 0 60 Q 170 -10 340 50 Z" fill="url(#page)"/>
+   ${[0,1,2,3,4].map(i=>`<path d="M -300 ${-185+i*42} Q -160 ${-232+i*42} -40 ${-182+i*42}" stroke="#c9b98f" stroke-width="9" fill="none" stroke-linecap="round"/>`).join('')}
+   ${[0,1,2,3].map(i=>`<path d="M 40 ${-182+i*42} Q 160 ${-232+i*42} 300 ${-185+i*42}" stroke="#c9b98f" stroke-width="9" fill="none" stroke-linecap="round"/>`).join('')}
+   <path d="M 0 -220 L 0 60" stroke="#b9a678" stroke-width="6"/>
+  </g>`;
+}
+function eyes(x,y,s,look=0){return `<g transform="translate(${x} ${y}) scale(${s})"><circle cx="-30" cy="0" r="26" fill="#fff"/><circle cx="30" cy="0" r="26" fill="#fff"/><circle cx="${-30+look}" cy="-2" r="11" fill="#000"/><circle cx="${30+look}" cy="-2" r="11" fill="#000"/></g>`}
+
+let art='';
+if(v==='a'){
+  // Variante A: Buch, aus dem ein gelber Twist-Pfeil wirbelt; im Licht steht eine dunkle Gestalt
+  art = `${mountains}<ellipse cx="512" cy="700" rx="520" ry="420" fill="url(#light)"/>
+   <g transform="translate(512 770) scale(.86)">${book()}</g>
+   <path d="M 512 520 C 512 380 700 380 690 250 C 680 120 470 110 450 230 C 435 330 600 330 608 250" stroke="#ffd21f" stroke-width="44" fill="none" stroke-linecap="round"/>
+   <path d="M 610 165 L 566 250 L 652 250 Z" fill="#ffd21f" stroke="#ffd21f" stroke-width="10" stroke-linejoin="round"/>
+   <g transform="translate(410 580)"><rect x="-18" y="-120" width="36" height="100" rx="12" fill="#05050c"/><circle cx="0" cy="-140" r="26" fill="#05050c"/><circle cx="-8" cy="-142" r="4" fill="#fff"/><circle cx="8" cy="-142" r="4" fill="#fff"/></g>`;
+} else {
+  // Variante B: Das Buch als Figur mit großen Augen, Seite dreht sich zum Twist
+  art = `${mountains}<ellipse cx="512" cy="760" rx="520" ry="400" fill="url(#light)"/>
+   <g transform="translate(512 650) scale(.92)">
+     <rect x="-250" y="-300" width="500" height="560" rx="30" fill="#0b0b14"/>
+     <rect x="-250" y="-300" width="60" height="560" rx="20" fill="#1c1c2c"/>
+     <rect x="-170" y="230" width="400" height="22" rx="6" fill="#fff6dc"/>
+     <rect x="-150" y="-210" width="330" height="70" rx="14" fill="#ffd21f"/>
+     <text x="15" y="-160" text-anchor="middle" font-family="Inter" font-weight="800" font-size="46" letter-spacing="2" fill="#0b0b14">STORY</text>
+     ${eyes(15,10,2.4,10)}
+     <ellipse cx="15" cy="135" rx="30" ry="36" fill="#fff"/><ellipse cx="15" cy="140" rx="19" ry="23" fill="#6b1424"/>
+     <path d="M 140 -300 L 140 -380 C 140 -470 300 -470 300 -380 C 300 -320 220 -320 220 -370" stroke="#ffd21f" stroke-width="30" fill="none" stroke-linecap="round"/>
+     <path d="M 220 -415 L 185 -355 L 255 -355 Z" fill="#ffd21f" stroke="#ffd21f" stroke-width="8" stroke-linejoin="round"/>
+   </g>
+`;
+}
+document.body.innerHTML = `<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">${defs}
+ <rect width="1024" height="1024" fill="url(#bg)"/>${stars}
+ <circle cx="800" cy="170" r="46" fill="#ffd21f" opacity=".9"/><circle cx="782" cy="158" r="46" fill="#1d1a45"/>
+ ${art}</svg>`;
+</script></body></html>
