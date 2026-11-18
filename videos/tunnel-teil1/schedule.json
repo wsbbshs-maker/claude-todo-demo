@@ -1,80 +1,80 @@
 {
- "duration": 50.357,
+ "duration": 57.6,
  "segs": [
   {
    "scene": "monitorWall",
    "start": 0,
-   "end": 5.623,
+   "end": 6.05,
    "jump": false,
    "red": false
   },
   {
    "scene": "tunnel",
-   "start": 5.623,
-   "end": 11.73,
+   "start": 6.05,
+   "end": 13.31,
    "jump": false,
    "red": false
   },
   {
    "scene": "cam",
-   "start": 11.73,
-   "end": 17.55,
+   "start": 13.31,
+   "end": 19.883,
    "jump": false,
    "red": false
   },
   {
    "scene": "radio",
-   "start": 17.55,
-   "end": 24.14,
+   "start": 19.883,
+   "end": 26.423,
    "jump": false,
    "red": false
   },
   {
    "scene": "cam",
-   "start": 24.14,
-   "end": 26.322,
+   "start": 26.423,
+   "end": 28.983,
    "jump": true,
    "red": false
   },
   {
    "scene": "tunnelWalk",
-   "start": 26.322,
-   "end": 30.471,
+   "start": 28.983,
+   "end": 33.063,
    "jump": false,
    "red": false
   },
   {
    "scene": "cam",
-   "start": 30.471,
-   "end": 35.103,
+   "start": 33.063,
+   "end": 37.79,
    "jump": true,
    "red": false
   },
   {
    "scene": "face",
-   "start": 35.103,
-   "end": 39.189,
+   "start": 37.79,
+   "end": 43.11,
    "jump": false,
    "red": false
   },
   {
    "scene": "radio",
-   "start": 39.189,
-   "end": 45.488,
+   "start": 43.11,
+   "end": 50.95,
    "jump": false,
    "red": true
   },
   {
    "scene": "behind",
-   "start": 45.488,
-   "end": 47.786,
+   "start": 50.95,
+   "end": 53.93,
    "jump": false,
    "red": false
   },
   {
    "scene": "end",
-   "start": 47.786,
-   "end": 50.357,
+   "start": 53.93,
+   "end": 57.6,
    "jump": false,
    "red": false
   }
