@@ -1,10 +1,10 @@
 {
- "duration": 72.48846153846154,
+ "duration": 78.64,
  "segs": [
   {
    "scene": "dronePOV",
    "start": 0,
-   "end": 4.876923076923077,
+   "end": 5.09,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -13,33 +13,33 @@
   },
   {
    "scene": "eyeClose",
-   "start": 4.876923076923077,
-   "end": 8.684615384615384,
+   "start": 5.09,
+   "end": 9.87,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
    "blinks": [
-    6.63846153846154,
-    7.6923076923076925
+    7.3100000000000005,
+    8.81
    ]
   },
   {
    "scene": "intro",
-   "start": 8.684615384615384,
-   "end": 16.10769230769231,
+   "start": 9.87,
+   "end": 18.35,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "last": 14.98846153846154
+   "last": 16.54
   },
   {
    "scene": "reveal",
-   "start": 16.10769230769231,
-   "end": 23.761538461538468,
+   "start": 18.35,
+   "end": 26.15,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -48,71 +48,71 @@
   },
   {
    "scene": "mimic",
-   "start": 23.761538461538468,
-   "end": 28.734615384615395,
+   "start": 26.15,
+   "end": 32.49,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
    "dBeeps": [
-    23.911538461538466,
-    24.211538461538467,
-    25.37307692307693
+    26.3,
+    26.6,
+    27.54
    ],
    "pBeeps": [
-    26.6923076923077,
-    26.9923076923077
+    30,
+    30.3
    ]
   },
   {
    "scene": "snap",
-   "start": 28.734615384615395,
-   "end": 32.6423076923077,
+   "start": 32.49,
+   "end": 35.81,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "lunge": 30.588461538461548
+   "lunge": 33.86
   },
   {
    "scene": "phone",
-   "start": 32.6423076923077,
-   "end": 40.92307692307693,
+   "start": 35.81,
+   "end": 45.19,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "post": 37.63846153846155
+   "post": 41.34
   },
   {
    "scene": "nightDoor",
-   "start": 40.92307692307693,
-   "end": 45.292307692307695,
+   "start": 45.19,
+   "end": 49.15,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "knock": 42.150000000000006
+   "knock": 46.14
   },
   {
    "scene": "agents",
-   "start": 45.292307692307695,
-   "end": 52.63846153846154,
+   "start": 49.15,
+   "end": 57.39,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "badge": 49.90384615384615
+   "badge": 54.24
   },
   {
    "scene": "agentTalk",
-   "start": 52.63846153846154,
-   "end": 57.90769230769231,
+   "start": 57.39,
+   "end": 62.77,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -121,44 +121,44 @@
   },
   {
    "scene": "viral",
-   "start": 57.90769230769231,
-   "end": 62.72692307692307,
+   "start": 62.77,
+   "end": 67.87,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "standort": 61.45384615384615
+   "standort": 66.62
   },
   {
    "scene": "glasses",
-   "start": 62.72692307692307,
-   "end": 67.07307692307691,
+   "start": 67.87,
+   "end": 71.83,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "lift": 65.26153846153845
+   "lift": 70.08
   },
   {
    "scene": "agentBlink",
-   "start": 67.07307692307691,
-   "end": 70.23846153846154,
+   "start": 71.83,
+   "end": 75.19,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
    "blinks": [
-    67.32307692307691,
-    68.24615384615383
+    72.08,
+    73.28
    ]
   },
   {
    "scene": "end",
-   "start": 70.23846153846154,
-   "end": 72.48846153846154,
+   "start": 75.19,
+   "end": 78.64,
    "jump": false,
    "red": false,
    "lampsOut": false,
