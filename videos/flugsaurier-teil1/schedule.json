@@ -1,0 +1,169 @@
+{
+ "duration": 72.48846153846154,
+ "segs": [
+  {
+   "scene": "dronePOV",
+   "start": 0,
+   "end": 4.876923076923077,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "eyeClose",
+   "start": 4.876923076923077,
+   "end": 8.684615384615384,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "blinks": [
+    6.63846153846154,
+    7.6923076923076925
+   ]
+  },
+  {
+   "scene": "intro",
+   "start": 8.684615384615384,
+   "end": 16.10769230769231,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "last": 14.98846153846154
+  },
+  {
+   "scene": "reveal",
+   "start": 16.10769230769231,
+   "end": 23.761538461538468,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "mimic",
+   "start": 23.761538461538468,
+   "end": 28.734615384615395,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "dBeeps": [
+    23.911538461538466,
+    24.211538461538467,
+    25.37307692307693
+   ],
+   "pBeeps": [
+    26.6923076923077,
+    26.9923076923077
+   ]
+  },
+  {
+   "scene": "snap",
+   "start": 28.734615384615395,
+   "end": 32.6423076923077,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "lunge": 30.588461538461548
+  },
+  {
+   "scene": "phone",
+   "start": 32.6423076923077,
+   "end": 40.92307692307693,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "post": 37.63846153846155
+  },
+  {
+   "scene": "nightDoor",
+   "start": 40.92307692307693,
+   "end": 45.292307692307695,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "knock": 42.150000000000006
+  },
+  {
+   "scene": "agents",
+   "start": 45.292307692307695,
+   "end": 52.63846153846154,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "badge": 49.90384615384615
+  },
+  {
+   "scene": "agentTalk",
+   "start": 52.63846153846154,
+   "end": 57.90769230769231,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "viral",
+   "start": 57.90769230769231,
+   "end": 62.72692307692307,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "standort": 61.45384615384615
+  },
+  {
+   "scene": "glasses",
+   "start": 62.72692307692307,
+   "end": 67.07307692307691,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "lift": 65.26153846153845
+  },
+  {
+   "scene": "agentBlink",
+   "start": 67.07307692307691,
+   "end": 70.23846153846154,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "blinks": [
+    67.32307692307691,
+    68.24615384615383
+   ]
+  },
+  {
+   "scene": "end",
+   "start": 70.23846153846154,
+   "end": 72.48846153846154,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  }
+ ]
+}
