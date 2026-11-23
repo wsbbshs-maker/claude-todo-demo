@@ -113,7 +113,7 @@ const V={
      ${twistRibbon('M -30 70 C -50 170 -230 160 -214 70 C -206 22 -146 26 -150 76',24,false)}${arrowHead(-150,86,180,.55)}
     </g>${particles(512,460,260,22,4)}`,
   // 6: Toter Baum in T-Form vor riesigem Mond, Puppe am Seil, Augen im Stamm
-  '6':()=>`<circle cx="512" cy="430" r="380" fill="${Y}" opacity=".1" filter="url(#blur8)"/><circle cx="512" cy="430" r="300" fill="url(#moonG)"/>
+  '6':()=>`<circle cx="512" cy="430" r="300" fill="url(#moonG)"/>
     ${[[420,330,34],[620,520,24],[560,300,16],[440,560,20]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#e8b84a" opacity=".55"/>`).join('')}
     <path d="M0 860 Q 260 780 512 800 Q 780 820 1024 780 L1024 1024 L0 1024 Z" fill="#0a0918"/>
     <g fill="none" stroke="#06050c" stroke-linecap="round">
