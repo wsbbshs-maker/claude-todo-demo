@@ -874,7 +874,7 @@ const DOLL_DRESS=['#8a5f6e','#5f7488','#8f8456','#666b52','#7a5c48','#6b5c88','#
 const DOLL_HAIR=['#a89060','#4a3420',null,'#1e1510',null,'#8a5a2a','#9a8458'];
 const DOLL_EYES=[2,1,0,2,1,2,2];
 function doll(o,t){ // Ursprung = Aufhängepunkt
-  const p={v:0,s:1,sway:0,look:null,blink:0,head:0,watcher:false,glow:0,L:null,ghostEyes:false,...o};
+  const p={v:0,s:1,sway:0,look:null,blink:0,head:0,turn:0,watcher:false,glow:0,L:null,ghostEyes:false,...o};
   const v=p.v%7, L=p.L!==null?p.L:60+(p.v%3)*25, skin='#cfc6b2', hy=L+26;
   const dress=p.watcher?'#8e2f3a':DOLL_DRESS[v], hair=p.watcher?'#b89a5a':DOLL_HAIR[v], ne=p.watcher?2:DOLL_EYES[v];
   const lx=p.look===null?((p.v%3)-1)*4.5:p.look;
@@ -885,7 +885,7 @@ function doll(o,t){ // Ursprung = Aufhängepunkt
    ${v%4!==1?`<path d="M 13 ${hy+30} L 26 ${hy+74}" stroke="${skin}" stroke-width="7" stroke-linecap="round"/>`:''}
    <path d="M -10 ${hy+92} L -12 ${hy+122} M 10 ${hy+92} L 12 ${hy+122}" stroke="${skin}" stroke-width="8" stroke-linecap="round"/>
    <path d="M -16 ${hy+124} L -6 ${hy+124} M 6 ${hy+124} L 16 ${hy+124}" stroke="#3a2a22" stroke-width="7" stroke-linecap="round"/>
-   <g transform="translate(0 ${hy}) rotate(${p.head})">
+   <g transform="translate(0 ${hy}) rotate(${p.head} 0 -26)">
     ${p.glow?`<circle r="70" fill="url(#ghostGlow)" opacity="${p.glow}"/>`:''}
     <circle r="26" fill="${skin}"/><path d="M 4 -26 A 26 26 0 0 1 4 26 A 30 30 0 0 0 4 -26 Z" fill="#8f93a8" opacity=".55"/>
     <path d="M -6 -25 L -1 -13 L -9 -5 L -2 4 L -6 10" stroke="#4e4436" stroke-width="2.2" fill="none"/>${v%3===0?'<path d="M 18 -18 L 10 -8 L 16 -2" stroke="#4e4436" stroke-width="2" fill="none"/>':''}
@@ -893,6 +893,7 @@ function doll(o,t){ // Ursprung = Aufhängepunkt
     <circle cx="12" cy="14" r="4" fill="#5a6a3a" opacity=".45"/><circle cx="-14" cy="-12" r="3" fill="#5a6a3a" opacity=".4"/>
     ${hair?`<path d="M -27 -4 Q -30 -34 0 -32 Q 30 -34 27 -4 Q 20 -24 0 -22 Q -20 -24 -27 -4 Z" fill="${hair}"/><path d="M -26 -6 Q -34 14 -28 30 M 26 -6 Q 34 14 28 30" stroke="${hair}" stroke-width="6" fill="none"/>`:''}
     ${p.watcher?`<path d="M 14 -30 l 17 -10 l -2 17 Z M 14 -30 l -3 -19 l 15 7 Z" fill="#d4202f"/><circle cx="15" cy="-30" r="4.5" fill="#a0101f"/>`:''}`;
+  s+=`<g transform="translate(${p.turn*11} 0) scale(${1-Math.abs(p.turn)*0.22} 1)">`;
   [[-9,0],[9,1]].forEach(([ex,i])=>{
     if(p.blink>0.5) s+=`<path d="M ${ex-6} -2 Q ${ex} 2 ${ex+6} -2" stroke="#5a4a38" stroke-width="2.5" fill="none"/>`;
     else if(p.ghostEyes) s+=`<circle cx="${ex}" cy="-2" r="10" fill="#e6f4ff" opacity=".55"/><circle cx="${ex}" cy="-2" r="6.5" fill="#fff"/><circle cx="${ex}" cy="-2" r="2" fill="#0a0a0a"/>`;
@@ -900,7 +901,7 @@ function doll(o,t){ // Ursprung = Aufhängepunkt
     else s+=`<circle cx="${ex}" cy="-2" r="7.5" fill="#0d0a08"/><circle cx="${ex}" cy="-2" r="9" fill="none" stroke="#5a5044" stroke-width="2" opacity=".6"/>`;
     if(p.blink<=0.5) s+=`<path d="M ${ex-1} 6 Q ${ex-2} 14 ${ex+1} 22" stroke="#4e4436" stroke-width="${i?1.6:2.2}" fill="none" opacity=".55"/>`;
   });
-  s+=`<path d="M -5 13 Q 0 15 5 12" stroke="#3a1a1e" stroke-width="2.4" fill="none"/><circle cx="-14" cy="8" r="3.5" fill="#b07a80" opacity=".35"/><circle cx="14" cy="8" r="3.5" fill="#b07a80" opacity=".35"/></g></g>`;
+  s+=`<path d="M -5 13 Q 0 15 5 12" stroke="#3a1a1e" stroke-width="2.4" fill="none"/><circle cx="-14" cy="8" r="3.5" fill="#b07a80" opacity=".35"/><circle cx="14" cy="8" r="3.5" fill="#b07a80" opacity=".35"/></g></g></g>`;
   return s;
 }
 function watcher(x,y,s,t,o={}){return `<g transform="translate(${x} ${y})">${doll({watcher:true,v:0,s,look:0,head:0,sway:0,L:50,...o},t)}</g>`;}
@@ -918,7 +919,7 @@ function dollTree(x,y,h,t,o={}){
   let s=treeD(x,y,h,{br,col:o.col,leaf:o.leaf}), k=0;
   br.forEach((b,bi)=>{for(let j=0;j<n;j++){ if(o.limit!==undefined&&k>=o.limit){k++;continue;}
     const u=0.42+j*(0.5/n)+rnd(x+bi*7+j)*0.08, [px,py]=branchPoint(x,y,h,b,u), lk=o.lookAll!==undefined?o.lookAll:null;
-    s+=`<g transform="translate(${px} ${py})">${doll({v:Math.floor(rnd(x+bi*13+j)*7),s:o.s||0.9,sway:Math.sin(t*1.2+bi+j*1.7)*5,look:lk,head:o.headAll!==undefined?o.headAll:Math.sin(t*0.6+j+bi)*10},t)}</g>`; k++;}});
+    s+=`<g transform="translate(${px} ${py})">${doll({v:Math.floor(rnd(x+bi*13+j)*7),s:o.s||0.9,sway:Math.sin(t*1.2+bi+j*1.7)*5,look:lk,head:o.headAll!==undefined?o.headAll:Math.sin(t*0.6+j+bi)*5,turn:o.turnAll!==undefined?o.turnAll:Math.sin(t*0.4+j*2+bi)*0.6},t)}</g>`; k++;}});
   return s;
 }
 function canalBg(t,o={}){
@@ -985,8 +986,8 @@ Object.assign(SCENES,{
     let o=PT_DEFS+IS_DEFS+canalBg(t,{water:1180})+dollTree(820,1180,620,t,{s:.75,n:2})+dollTree(250,1180,560,t,{s:.7,n:2});
     o+=`<rect width="${W}" height="${H}" fill="#05060f" opacity=".35"/>`;
     o+=`<path d="M -40 380 Q 300 330 560 372 Q 820 410 1120 350" stroke="#0a0818" stroke-width="44" fill="none"/><path d="M 300 360 Q 260 300 200 280" stroke="#0a0818" stroke-width="20" fill="none"/>`;
-    o+=`<g transform="translate(150 350)">${doll({v:2,s:2.6,sway:Math.sin(t*1.4)*7,head:-14},t)}</g><g transform="translate(940 360)">${doll({v:5,s:2.8,sway:Math.sin(t*1.2+1)*6,head:12},t)}</g>`;
-    o+=watcher(545,372,3.3,t,{head:lerp(38,0,turn),look:lerp(10,0,turn),blink:bl});
+    o+=`<g transform="translate(150 358)">${doll({v:2,s:2.6,sway:Math.sin(t*1.4)*7,head:-5,turn:-.6},t)}</g><g transform="translate(940 372)">${doll({v:5,s:2.8,sway:Math.sin(t*1.2+1)*6,head:5,turn:.6},t)}</g>`;
+    o+=watcher(545,372,3.3,t,{head:lerp(8,0,turn),turn:lerp(1,0,turn),look:lerp(8,0,turn),blink:bl});
     o+=`<rect width="${W}" height="${H}" fill="#0a1030" opacity=".18"/><radialGradient id="vig"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".7"/></radialGradient><rect width="${W}" height="${H}" fill="url(#vig)"/>`;
     return o;
   },
@@ -1043,9 +1044,12 @@ Object.assign(SCENES,{
     const cs=seg.chunksT, sp=speech(seg,t), snap=t>=cs[5].start, sk=snap?ease((t-cs[5].start)/0.15):0;
     let o=PT_DEFS+IS_DEFS+canalBg(t,{water:1100,mist:.6})+`<rect width="${W}" height="${H}" fill="#03040c" opacity=".4"/>`;
     o+=`<path d="M -20 1240 L 1100 1240 L 1100 1920 L -20 1920 Z" fill="#0c0f22"/>`+hut(640,1260,1.45,{doorLight:true,win:.5});
-    const hang=[[350,860,0],[470,840,1],[820,850,2],[930,870,3],[560,1010,4],[1010,1050,5],[260,1080,6]];
-    hang.forEach(([x,y,v],i)=>{const look=snap?0:Math.sin(t*0.8+i*1.7)*6, head=snap?0:Math.sin(t*.5+i)*18;
-      o+=`<g transform="translate(${x} ${y})">${doll({v,s:1.05,L:30,look,head,sway:Math.sin(t*1.3+i)*4},t)}</g>`;});
+    const sOpt=snap?{lookAll:0,headAll:0,turnAll:0}:{};
+    o+=dollTree(1000,1250,980,t,{s:.95,n:3,br:[[0.62,-1,560],[0.78,-1,300],[0.88,1,120]],...sOpt});
+    o+=dollTree(70,1250,900,t,{s:.9,n:2,br:[[0.6,1,240],[0.8,1,160]],...sOpt});
+    const eave=[[420,0],[560,1],[700,4],[850,2]];
+    eave.forEach(([x,v],i)=>{const look=snap?0:Math.sin(t*0.8+i*1.7)*6, turn=snap?0:Math.sin(t*.5+i*2)*0.7;
+      o+=`<g transform="translate(${x} ${955+(x-640)*(x<640?-0.5:0.5)*0})">${doll({v,s:1.05,L:8,look,turn,head:snap?0:Math.sin(t*.6+i)*4,sway:Math.sin(t*1.3+i)*3},t)}</g>`;});
     o+=watcher(90,560,.95,t);
     o+=`<g transform="translate(330 1830) scale(1.3)">${oldMan({armR:[20,-40],face:{lx:snap?0:Math.sin(t*1.7)*14,ly:snap?4:0,scared:snap?1:0.4,sweat:snap?1:0,blink:0}},t)}</g>`;
     if(snap) o+=`<rect width="${W}" height="${H}" fill="#bfe3ff" opacity="${.25*(1-clamp((t-cs[5].start)/0.4))}"/>`;
@@ -1056,7 +1060,7 @@ Object.assign(SCENES,{
     o+=`<g transform="translate(${-lt*16} 0)">`;
     for(let r=0;r<4;r++){const y=360+r*300; o+=`<path d="M -100 ${y} Q 600 ${y-30+r*8} 1400 ${y+10}" stroke="#0a0818" stroke-width="16" fill="none"/>`;
       for(let c=0;c<7;c++){const x=120+c*170+(r%2)*80; if(r===0&&c===0){o+=watcher(x,y,1.2,t);continue;}
-        o+=`<g transform="translate(${x} ${y})">${doll({v:r*7+c,s:1.15,L:24,look:((c+r)%2?1:-1)*6,head:((c*3+r)%5-2)*12,sway:Math.sin(t*1.1+c+r)*4},t)}</g>`;}}
+        o+=`<g transform="translate(${x} ${y})">${doll({v:r*7+c,s:1.15,L:24,look:((c+r)%2?1:-1)*6,head:((c*3+r)%5-2)*4,turn:((c+r)%3-1)*0.75,sway:Math.sin(t*1.1+c+r)*4},t)}</g>`;}}
     o+=`</g>`;
     return o;
   },

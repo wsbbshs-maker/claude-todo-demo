@@ -10,23 +10,22 @@ SR = 48000; FPS = 30; GAP = 0.3
 # Untertitel-Chunks: (erstes Wort, letztes Wort, Anzeige, Sprecher) – Wortindizes im Gesamttext
 J, M = 'jonas', 'mehmet'
 SEGS = [
-    [(0, 2, 'IN *340 METERN*', J), (3, 3, 'HÖHE', J), (4, 5, '*KLOPFT* ETWAS', J), (6, 8, 'AN MEINE *DROHNE*', J)],
-    [(9, 10, 'ICH DREHE', J), (11, 12, 'DIE *KAMERA*', J), (13, 15, 'UND ES *BLINZELT*', J), (16, 16, '*SEITWÄRTS*', J)],
-    [(17, 20, 'ICH BIN *TIM*, 19', J), (21, 24, 'ICH FILME IN *MEXIKO*', J), (25, 25, '*HOCHZEITEN*', J), (26, 28, 'MIT MEINER DROHNE', J), (29, 31, 'HEUTE NUR *DSCHUNGEL*', J), (32, 33, '*DACHTE ICH*', J)],
-    [(34, 36, 'NEBEN MEINER DROHNE', J), (37, 39, 'FLIEGT EIN *FLUGSAURIER*', J), (40, 41, '*ZEHN METER*', J), (42, 42, 'SPANNWEITE', J), (43, 45, 'UND AM BEIN', J), (46, 48, 'EIN BLINKENDER *SENDER*', J)],
-    [(49, 50, 'DANN *PIEPT*', J), (51, 52, 'MEIN AKKU', J), (53, 54, '*18 PROZENT*', J), (55, 56, 'UND ER', J), (57, 58, '*PIEPT NACH*', J), (59, 60, '*EXAKT* GLEICH', J)],
-    [(61, 62, 'ER LEGT', J), (63, 65, 'DEN KOPF *SCHIEF*', J), (66, 68, 'UND *SCHNAPPT* ZU', J)],
-    [(69, 70, 'SIGNAL WEG', J), (71, 72, 'DROHNE WEG', J), (73, 75, 'ABER DAS VIDEO', J), (76, 79, 'IST AUF MEINEM *HANDY*', J), (80, 80, 'NATÜRLICH', J), (81, 83, '*POSTE* ICH ES', J), (84, 84, 'SOFORT', J), (85, 88, 'DAS GEHT *SAFE VIRAL*', J)],
-    [(89, 91, 'NACHTS UM *DREI*', J), (92, 93, '*KLOPFT* ES', J), (94, 94, '*WIEDER*', J), (95, 95, 'DIESMAL', J), (96, 98, 'AN MEINER *TÜR*', J)],
-    [(99, 100, 'ZWEI *MÄNNER*', J), (101, 102, 'SCHWARZE *ANZÜGE*', J), (103, 103, '*SONNENBRILLEN*', J), (104, 107, 'MITTEN IN DER *NACHT*', J), (108, 110, 'AUF DEM AUSWEIS', J), (111, 111, '*PROYECTO QUETZAL*', J)],
-    [(112, 113, 'EINER SAGT', J), (114, 116, '*LÖSCH* DAS VIDEO', M), (117, 120, 'WIR JAGEN IHN *NICHT*', M), (121, 123, 'WIR *VERSTECKEN* IHN', M)],
-    [(124, 125, 'DANN *VIBRIERT*', J), (126, 127, 'MEIN HANDY', J), (128, 129, '*ZWEI MILLIONEN*', J), (130, 130, 'AUFRUFE', J), (131, 132, 'MIT *STANDORT*', J)],
-    [(133, 134, 'DER MANN', J), (135, 136, 'WIRD *STILL*', J), (137, 139, 'DANN NIMMT ER', J), (140, 142, 'DIE *SONNENBRILLE* AB', J)],
-    [(143, 144, 'UND *BLINZELT*', J), (145, 145, '*SEITWÄRTS*', J)],
-    [(146, 147, '*TEIL 2*', J), (148, 149, 'MORGEN', J)],
+    [(0, 2, 'EINE DIESER *PUPPEN*', J), (3, 5, 'IST *KEINE* PUPPE', J)],
+    [(6, 8, 'DU SIEHST GERADE', J), (9, 11, 'EINEN DER *GRUSELIGSTEN*', J), (12, 14, '*ORTE* DER WELT', J), (15, 17, 'WO ER IST', J), (18, 20, 'SAGE ICH DIR', J), (21, 22, 'AM *ENDE*', J)],
+    [(23, 25, 'ICH WAR NOCH', J), (26, 27, 'EIN *KIND*', J), (28, 30, 'ALS ICH HIER', J), (31, 34, 'INS *WASSER* GEFALLEN BIN', J), (35, 35, 'SEITDEM', J), (36, 38, 'BIN ICH *HIER*', J)],
+    [(39, 40, 'DANN KAM', J), (41, 43, 'EIN *ALTER MANN*', J), (44, 47, 'ER HAT EINE *PUPPE*', J), (48, 50, 'IM WASSER GEFUNDEN', J), (51, 52, '*MEINE* PUPPE', J)],
+    [(53, 55, 'ER HAT SIE', J), (56, 59, 'IN EINEN *BAUM* GEHÄNGT', J), (60, 61, 'DAMIT ICH', J), (62, 64, 'NICHT *ALLEIN* BIN', J)],
+    [(65, 67, 'DANN NOCH EINE', J), (68, 70, 'UND NOCH EINE', J), (71, 73, '*FÜNFZIG JAHRE* LANG', J), (74, 75, 'AM ENDE', J), (76, 77, '*ÜBER TAUSEND*', J)],
+    [(78, 81, 'NACHTS HAT ER SIE', J), (82, 83, '*FLÜSTERN* GEHÖRT', J), (84, 86, 'ER HAT GESAGT', J), (87, 88, 'SIE BEWEGEN', J), (89, 90, 'DIE *AUGEN*', J), (91, 93, 'ER HATTE *RECHT*', J)],
+    [(94, 96, '*SPEICHER* DIR DAS', J), (97, 97, 'LIEBER', J), (98, 100, 'BEIM *ZWEITEN* MAL', J), (101, 102, 'SIEHST DU', J), (103, 105, 'WELCHE PUPPE DICH', J), (106, 109, 'DIE GANZE ZEIT *ANSCHAUT*', J)],
+    [(110, 112, 'IM JAHR *2001*', J), (113, 115, 'HABEN SIE IHN', J), (116, 116, '*GEFUNDEN*', J), (117, 118, 'IM KANAL', J), (119, 120, 'GENAU DA', J), (121, 125, 'WO ER *MICH* GEFUNDEN HAT', J)],
+    [(126, 126, 'SEITDEM', J), (127, 128, 'BIN ICH', J), (129, 131, 'NICHT MEHR *ALLEIN*', J)],
+    [(132, 135, 'ICH HABE AM ANFANG', J), (136, 136, 'GESAGT', J), (137, 139, 'EINE DIESER PUPPEN', J), (140, 142, 'IST *KEINE* PUPPE', J), (143, 145, '*DAS WAR ICH*', J)],
+    [(146, 148, 'DIESER ORT HEISST', J), (149, 152, '*ISLA DE LAS MUÑECAS*', J), (153, 156, 'DIE *INSEL DER PUPPEN*', J), (157, 158, 'IN *MEXIKO*', J)],
+    [(159, 160, '*FOLG MIR*', J), (161, 164, 'DANN ZEIG ICH DIR', J), (165, 168, 'WAS ER IN SEINER', J), (169, 170, '*LETZTEN NACHT*', J), (171, 172, 'GESEHEN HAT', J)],
 ]
 # zusätzliche Stille (Sekunden) VOR diesem Wort – mehr Spannung vor "Teil 2"
-EXTRA_PAUSE = {0: 0.9, 34: 0.5, 69: 0.6, 89: 0.5, 124: 0.2, 143: 0.4, 146: 1.0}
+EXTRA_PAUSE = {0: 0.9, 39: 0.3, 53: 0.2, 78: 0.4, 94: 0.6, 110: 0.4, 126: 0.4, 132: 0.6, 146: 0.6, 159: 0.3}
 
 
 def load(f):
@@ -113,4 +112,5 @@ with open(f'{OUT}/timing.js', 'w') as fh:
     fh.write('var TIMING=' + json.dumps({'duration': round(end_t - 0.4, 3), 'segs': timing}, ensure_ascii=False) + ';\n')
     fh.write('var MOUTH=' + json.dumps([round(float(x), 2) for x in mouth]) + ';\n')
     fh.write("if(typeof module!=='undefined')module.exports={TIMING,MOUTH};\n")
+json.dump([[w[0], round(w[1], 3), round(w[2], 3)] for w in words], open(f'{OUT}/words_final.json', 'w'), ensure_ascii=False)
 print('Dauer', round(end_t, 2))

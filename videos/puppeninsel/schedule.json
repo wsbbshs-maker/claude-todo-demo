@@ -1,21 +1,21 @@
 {
- "duration": 79.11666666666667,
+ "duration": 71.52600000000001,
  "segs": [
   {
    "scene": "dollBlink",
    "start": 0,
-   "end": 4,
+   "end": 3.21,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "c1": 2.4
+   "c1": 1.9
   },
   {
    "scene": "canal",
-   "start": 4,
-   "end": 11,
+   "start": 3.21,
+   "end": 9.57,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -24,8 +24,8 @@
   },
   {
    "scene": "ghostGirl",
-   "start": 11,
-   "end": 17.666666666666668,
+   "start": 9.57,
+   "end": 14.47,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -34,8 +34,8 @@
   },
   {
    "scene": "oldMan",
-   "start": 17.666666666666668,
-   "end": 23.83333333333334,
+   "start": 14.47,
+   "end": 20.312,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -44,8 +44,8 @@
   },
   {
    "scene": "hangFirst",
-   "start": 23.83333333333334,
-   "end": 29.000000000000004,
+   "start": 20.312,
+   "end": 24.112,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -54,8 +54,8 @@
   },
   {
    "scene": "timelapse",
-   "start": 29.000000000000004,
-   "end": 34.83333333333334,
+   "start": 24.112,
+   "end": 30.692,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -64,19 +64,19 @@
   },
   {
    "scene": "whisper",
-   "start": 34.83333333333334,
-   "end": 41.91666666666667,
+   "start": 30.692,
+   "end": 37.152,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "wsnap": 40.400000000000006
+   "wsnap": 35.502
   },
   {
    "scene": "watchers",
-   "start": 41.91666666666667,
-   "end": 49.71666666666667,
+   "start": 37.152,
+   "end": 43.673,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -85,8 +85,8 @@
   },
   {
    "scene": "man2001",
-   "start": 49.71666666666667,
-   "end": 56.21666666666666,
+   "start": 43.673,
+   "end": 51.173,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -95,8 +95,8 @@
   },
   {
    "scene": "notAlone",
-   "start": 56.21666666666666,
-   "end": 59.55,
+   "start": 51.173,
+   "end": 53.993,
    "jump": false,
    "red": false,
    "lampsOut": false,
@@ -105,30 +105,30 @@
   },
   {
    "scene": "loop",
-   "start": 59.55,
-   "end": 66.03333333333333,
+   "start": 53.993,
+   "end": 59.856,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "lrev": 64.41666666666666
+   "lrev": 57.943
   },
   {
    "scene": "placeReveal",
-   "start": 66.03333333333333,
-   "end": 71.95,
+   "start": 59.856,
+   "end": 65.716,
    "jump": false,
    "red": false,
    "lampsOut": false,
    "flicker": false,
    "exit": false,
-   "pname": 67.60000000000001
+   "pname": 60.906
   },
   {
    "scene": "follow",
-   "start": 71.95,
-   "end": 79.11666666666667,
+   "start": 65.716,
+   "end": 71.52600000000001,
    "jump": false,
    "red": false,
    "lampsOut": false,

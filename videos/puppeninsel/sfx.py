@@ -208,6 +208,43 @@ def birds(d):
         k+=rng.uniform(0.6,1.4)
     return out
 
+
+# --- Echtes Flüstern aus der Sprachaufnahme (Zufallsphase = gehauchte Stimme) ---
+VOICE=None; WORDS=None
+if len(sys.argv)>4:
+    with wave.open(sys.argv[3]) as w_: VOICE=np.frombuffer(w_.readframes(w_.getnframes()),'<i2').astype(np.float64)/32767
+    WORDS=json.load(open(sys.argv[4]))
+def whisperize(x, stretch=1.3, n=1024, hop=256):
+    if len(x)<n+2*hop: x=np.concatenate([x,np.zeros(n+2*hop-len(x))])
+    win=np.hanning(n); fr=[np.fft.rfft(x[i:i+n]*win) for i in range(0,len(x)-n,hop)]
+    mag=np.abs(np.array(fr)); ker=np.ones(9)/9
+    mag=np.array([np.convolve(m,ker,'same') for m in mag])
+    ho=int(hop*stretch); y=np.zeros(ho*len(mag)+n); ws=np.zeros_like(y)
+    for i,m in enumerate(mag):
+        ph=np.exp(1j*rng.uniform(0,2*np.pi,len(m))); y[i*ho:i*ho+n]+=np.fft.irfft(m*ph,n)*win; ws[i*ho:i*ho+n]+=win**2
+    y/=np.maximum(ws,1e-2); y=bandkeep(y,[(350,9500,1.0),(2000,6000,0.6)])
+    y*=env(len(y),0.03,0.12)
+    return y/(np.abs(y).max()+1e-9)
+def wbank(keys):
+    if VOICE is None: return []
+    out=[]
+    for (w,a_,b_) in WORDS:
+        if any(k.lower() in w.lower() for k in keys):
+            sg=VOICE[max(0,int((a_-0.05)*SR)):int((b_+0.08)*SR)]
+            if len(sg)>3000: out.append(whisperize(sg, stretch=rng.uniform(1.15,1.55)))
+    return out
+def wphrase(i0,i1,stretch=1.3):
+    if VOICE is None: return None
+    a_=WORDS[i0][1]; b_=WORDS[i1][2]
+    return whisperize(VOICE[max(0,int((a_-0.05)*SR)):int((b_+0.1)*SR)],stretch)
+def wscatter(a,d,pool,rate=1.5,gain=0.5,width=0.85):
+    if not pool: return
+    k=rng.uniform(0,0.4)
+    while k<d-0.3:
+        w=pool[rng.integers(len(pool))]
+        add(echo(w*rng.uniform(0.55,1.0),0.12,0.35,3), a+k, gain, rng.uniform(-width,width)); k+=rng.exponential(1.0/rate)+0.15
+POOL_ALL=wbank(['Puppe','Augen','allein','hier','Wasser','Kind','recht','flüstern','Nacht','dich','mir'])
+
 # --- Grundatmosphäre (auch auf Handylautsprechern hörbar) ---
 t = np.arange(N) / SR
 pad = (np.sin(2 * np.pi * 55 * t) * 0.5 + np.sin(2 * np.pi * 110 * t) * 0.35 + np.sin(2 * np.pi * 164.8 * t) * 0.18)
@@ -349,16 +386,20 @@ for i, s in enumerate(segs):
         for bt in s.get('blinks',[]): add(wetblink(), bt, 1.0)
         add(hit(38,3.5), a+0.05, 0.9); add(screech(1.4,650), a+d*0.55, 0.45, -0.3)
     elif sc == 'dollBlink':
-        add(mama(), 0.08, 0.95, -0.2); add(creak(0.7), 0.28, 0.35, 0.2); add(waterlap(d), a, 0.5); add(frogs(d), a, 0.6)
+        add(mama(), 0.08, 0.95, -0.2); add(creak(0.7), 0.28, 0.35, 0.2)
+        pp=wbank(['Puppen'])
+        if pp: add(echo(pp[0],0.12,0.35,3), 0.5, 0.35, 0.65)
+        add(waterlap(d), a, 0.5); add(frogs(d), a, 0.6)
         add(musicbox(d+1.0, 0), a+0.3, 0.22); c1=s.get('c1')
         if c1: add(hit(48,2.0), c1, 0.6); add(glasstick(), 1.0, 0.5)
     elif sc == 'canal':
         add(waterlap(d), a, 0.6); add(frogs(d), a, 0.7); add(crickets(d), a, 0.6); add(musicbox(d, 4), a, 0.18)
-        add(creak(1.0), a+d*0.4, 0.18, -0.6)
+        add(creak(1.0), a+d*0.4, 0.18, -0.6); wscatter(a,d,wbank(['gruseligsten','Welt','Ende']),0.45,0.22)
     elif sc == 'ghostGirl':
         add(waterlap(d), a, 0.5); add(musicbox(d, 8), a, 0.2); k=0.3
         while k<d: add(drip(), a+k, 0.45, rng.uniform(-.4,.4)); k+=rng.uniform(0.35,0.8)
-        add(whispers(d), a, 0.12)
+        if VOICE is not None: wscatter(a,d,wbank(['Wasser','Kind','hier']),0.7,0.3)
+        else: add(whispers(d), a, 0.12)
     elif sc == 'oldMan':
         add(waterlap(d), a, 0.6); add(frogs(d), a, 0.5); add(creak(0.8), a+0.3, 0.25, -0.4)
         add(bandnoise(0.6,200,2000)*env(int(0.6*SR),0.02,0.4), a+d*0.45, 0.35, 0.4)
@@ -369,7 +410,9 @@ for i, s in enumerate(segs):
         k=0.2
         while k<d: add(creak(0.3), a+k, 0.12, rng.uniform(-.6,.6)); k+=rng.uniform(0.3,0.6)
     elif sc == 'whisper':
-        add(whispers(d), a, 0.9); add(whispers(d), a+0.2, 0.6, 0.7); add(whispers(d), a+0.4, 0.6, -0.7); add(crickets(d), a, 0.4)
+        add(crickets(d), a, 0.4)
+        if VOICE is not None: wscatter(a,d,POOL_ALL,3.0,0.85,0.95); wscatter(a+0.2,d,POOL_ALL,1.5,0.6,0.95)
+        else: add(whispers(d), a, 0.9)
         k=0.2
         while k<d: add(heartbeat(), a+k, 0.5); k+=0.85
         ws=s.get('wsnap')
@@ -378,23 +421,32 @@ for i, s in enumerate(segs):
             add(hit(44,2.5), ws+0.02, 0.9)
     elif sc == 'watchers':
         add(musicbox(d, 10), a, 0.25); add(dissonance(d), a, 0.06); add(waterlap(d), a, 0.3); add(mama(0.8), a+d-1.0, 0.25, 0.6)
+        wscatter(a,d,wbank(['anschaut','dich','Puppe','Zeit']),0.8,0.3)
     elif sc == 'man2001':
         add(waterlap(d), a, 0.7); add(dissonance(d), a, 0.07); k=0.4
         while k<d: add(drip(), a+k, 0.35); k+=rng.uniform(0.6,1.2)
         add(hit(40,3.0), a+0.1, 0.5)
     elif sc == 'notAlone':
         add(musicbox(d+0.5, 12), a, 0.3); add(crickets(d), a, 0.5); add(waterlap(d), a, 0.4)
+        wa=wphrase(131,131,1.5)
+        if wa is not None: add(echo(wa,0.14,0.4,4), a+d-0.9, 0.45, 0.7)
     elif sc == 'loop':
         k=0.1
         while k<d: add(heartbeat(), a+k, 0.7); k+=0.8
         lr=s.get('lrev')
-        if lr: add(hit(40,3.2), lr, 1.0); add(mama(0.7), lr+0.15, 0.6); add(dissonance(a+d-lr), lr, 0.15)
+        if lr:
+            add(hit(40,3.2), lr, 1.0); add(mama(0.7), lr+0.15, 0.45); add(dissonance(a+d-lr), lr, 0.15)
+            wp=wphrase(143,145,1.35)
+            if wp is not None: add(echo(wp,0.13,0.4,4), lr+0.9, 0.5, -0.6); add(echo(wp,0.17,0.35,3), lr+1.05, 0.35, 0.6)
     elif sc == 'placeReveal':
         add(birds(d), a, 1.0); add(waterlap(d), a, 0.5); pn=s.get('pname')
         if pn: add(whoosh(0.6), pn-0.25, 0.6); add(hit(55,1.8), pn, 0.6)
         add(musicbox(d, 0), a, 0.2)
     elif sc == 'follow':
-        add(whispers(d), a, 0.25); add(musicbox(d, 3), a, 0.25); add(birds(d), a, 0.4); add(hit(42,3.0), a+d-1.4, 0.8)
+        add(musicbox(d, 3), a, 0.25); add(birds(d), a, 0.4); add(hit(42,3.0), a+d-1.4, 0.8)
+        wf=wphrase(159,160,1.4)
+        if wf is not None: add(echo(wf,0.14,0.4,4), a+d-2.3, 0.5, -0.7); add(echo(wf,0.14,0.4,4), a+d-1.5, 0.45, 0.7)
+        else: add(whispers(d), a, 0.25)
     elif sc == 'behind':
         add(hit(42, 3.5), a, 1.0); add(dissonance(d + 0.5), a, 0.18); add(static(d, 1000, 9000), a, 0.12)
     elif sc == 'end':
