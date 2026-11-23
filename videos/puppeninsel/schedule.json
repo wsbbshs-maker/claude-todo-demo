@@ -1,0 +1,139 @@
+{
+ "duration": 79.11666666666667,
+ "segs": [
+  {
+   "scene": "dollBlink",
+   "start": 0,
+   "end": 4,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "c1": 2.4
+  },
+  {
+   "scene": "canal",
+   "start": 4,
+   "end": 11,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "ghostGirl",
+   "start": 11,
+   "end": 17.666666666666668,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "oldMan",
+   "start": 17.666666666666668,
+   "end": 23.83333333333334,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "hangFirst",
+   "start": 23.83333333333334,
+   "end": 29.000000000000004,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "timelapse",
+   "start": 29.000000000000004,
+   "end": 34.83333333333334,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "whisper",
+   "start": 34.83333333333334,
+   "end": 41.91666666666667,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "wsnap": 40.400000000000006
+  },
+  {
+   "scene": "watchers",
+   "start": 41.91666666666667,
+   "end": 49.71666666666667,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "man2001",
+   "start": 49.71666666666667,
+   "end": 56.21666666666666,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "notAlone",
+   "start": 56.21666666666666,
+   "end": 59.55,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  },
+  {
+   "scene": "loop",
+   "start": 59.55,
+   "end": 66.03333333333333,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "lrev": 64.41666666666666
+  },
+  {
+   "scene": "placeReveal",
+   "start": 66.03333333333333,
+   "end": 71.95,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false,
+   "pname": 67.60000000000001
+  },
+  {
+   "scene": "follow",
+   "start": 71.95,
+   "end": 79.11666666666667,
+   "jump": false,
+   "red": false,
+   "lampsOut": false,
+   "flicker": false,
+   "exit": false
+  }
+ ]
+}
