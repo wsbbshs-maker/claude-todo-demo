@@ -2,6 +2,19 @@
 
 Topic folder: `references/style-recipe/` · Report: `references/reports/style-recipe.md`
 
+> **Superseded in large part (2026-11-26).** This recipe was written from STYLE_BIBLE.md alone, before the
+> `cartoon-3d-short` skill and its seven measured reports were available. The skill's `templates/bridge/` is the
+> verified look (4 verifier rounds) and wins wherever the two differ:
+> - **Camera:** the "ease-out burst / holds ~80 %" grammar (`camera.ts` `burst`, section 5.5) is **wrong**. It came from
+>   a measurement that cannot see slow motion (`reports/motion.md`). Use symmetric ease-in-out glides of ~23 f, peak
+>   ~14-16 px/f at 720p, a push-in on every hold, and flip-sign impact kicks.
+> - **Grade:** do **not** pull blacks down toward p2 0.03 (`GRADE_*` `blackPoint`). The low p2 comes from ink lines and
+>   night shots; day darks are lifted and coloured (non-ink Y' p5 ~0.23, `reports/grade.md`). Use the skill's `grade.ts`.
+> - **Ink:** use the skill's `ink.ts` (~3 px at 1080, #030303-#0b0a0c, characters on the `NOINK` layer), not `InkEffect` here.
+> - **Characters:** use the skill's `cardshade.ts`.
+> - **Still useful:** `check_script.py` (now also in the skill as `templates/scripts/check_script.py`).
+>   `master_audio.py` and `measure_look.py` duplicate the skill's `mix.py` and `short_qa.py`.
+
 ## 0. Scope and limits (read first)
 
 - Input: the measured rule summary (format, voice, loudness, script formula, picture, camera, effects).

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Check a narration script against the measured reference formula.
 
-  python3 check_script.py script.txt [--seconds 67]
+  python3 check_script.py SCRIPT.md [--seconds 67]
+  (a leading "# title" block up to the first blank line, e.g. the facts list, is skipped)
 
 Formula (20/20 reference videos): hook = paradox stated as fact in sentence 1 (~10-16 words);
 setting in 1-2 present-tense lines; escalation with short dialogue; ~1 mystery beat
@@ -22,7 +23,10 @@ def main():
     ap.add_argument("path")
     ap.add_argument("--seconds", type=float, default=None, help="planned video length")
     a = ap.parse_args()
-    text = open(a.path, encoding="utf-8").read().replace("’", "'")
+    text = open(a.path, encoding="utf-8").read().replace("’", "'").replace("\r\n", "\n")
+    # SCRIPT.md layout: "# title" + Format/Facts lines, a blank line, then the narration. Skip that header.
+    if text.lstrip().startswith("#") and "\n\n" in text:
+        text = text.split("\n\n", 1)[1]
     text = re.sub(r"\s+", " ", text).strip()
     sents = [s.strip() for s in re.split(r"(?<=[.!?])\s+(?=[\"'A-Z])", text) if s.strip()]
     words = re.findall(r"[A-Za-z0-9']+", text)
